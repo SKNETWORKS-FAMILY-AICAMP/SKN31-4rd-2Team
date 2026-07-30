@@ -1,3 +1,9 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 
-# Create your views here.
+def chat(request):
+    return HttpResponse("챗봇 페이지 (임시)")
+
+def send_message(request):
+    return HttpResponse("메시지 (임시)")
+
