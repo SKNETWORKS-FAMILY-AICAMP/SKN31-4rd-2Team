@@ -1,0 +1,108 @@
+/* chatbot/static/chatbot/chatbot.css */
+
+.chat-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 0;
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    min-height: 600px;
+    border: 1px solid var(--color-border);
+}
+
+.chat-sidebar {
+    background: var(--color-dark-green);
+    color: #fff;
+    padding: 20px;
+}
+
+.chat-sidebar__profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.08);
+    padding: 12px;
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+}
+
+.chat-sidebar__tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+}
+.chat-sidebar__tabs .tabs__item { color: #d7dccf; }
+.chat-sidebar__tabs .tabs__item.active { background: var(--color-primary); color: #fff; }
+
+.chat-history-item {
+    padding: 12px;
+    border-radius: var(--radius-md);
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+.chat-history-item.active,
+.chat-history-item:hover {
+    background: rgba(255,255,255,0.1);
+}
+.chat-history-item small { color: #b7bfab; }
+
+.chat-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-main__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.chat-bubble {
+    max-width: 70%;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    line-height: 1.5;
+}
+.chat-bubble--bot {
+    background: var(--color-bg);
+    align-self: flex-start;
+}
+.chat-bubble--user {
+    background: var(--color-dark-green);
+    color: #fff;
+    align-self: flex-end;
+}
+
+.chat-input {
+    display: flex;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--color-border);
+}
+.chat-input input {
+    flex: 1;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+}
+.chat-input button {
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    width: 48px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}

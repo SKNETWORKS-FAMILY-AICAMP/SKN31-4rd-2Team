@@ -6,3 +6,6 @@ class Profile(models.Model):
     rank = models.CharField(max_length=20) # 계급
     enlist_date = models.DateField() # 입대일
     discharge_date = models.DateField() # 전역(예정)일
+
+    def __str__(self):
+        return f"{self.user} ({self.rank})"

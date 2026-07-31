@@ -224,3 +224,6 @@ __marimo__/
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# static
+staticfiles/
