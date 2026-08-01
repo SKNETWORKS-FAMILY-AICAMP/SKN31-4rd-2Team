@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}익명 게시판 - 진격의 박병장{% endblock %}
+{% block nav_board_active %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'board/css/board.css' %}?v=3">
+{% endblock %}
+
+{% block content %}
+<div class="page" style="max-width: 800px; margin: 0 auto;">
+    <!-- 게시판 헤더 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold mb-1">익명 게시판</h1>
+            <p class="text-muted mb-0 small">같은 상황의 동료들과 정보를 공유해요</p>
+        </div>
+        <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+            <i class="fa-solid fa-plus"></i> 글쓰기
+        </button>
+    </div>
+
+    <!-- 검색바 -->
+    <div class="mb-4">
+        <form method="GET" action="{% url 'board:list' %}">
+            {% if current_category %}
+            <input type="hidden" name="category" value="{{ current_category }}">
+            {% endif %}
+            <div class="input-group shadow-sm" style="border-radius: var(--radius-md); overflow: hidden;">
+                <span class="input-group-text border-end-0 text-muted border-0" style="background: var(--color-bg);">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" class="form-control border-start-0 border-0"
+                    style="background: var(--color-bg); box-shadow: none;" name="q" placeholder="게시물 검색..."
+                    value="{{ search_query }}">
+                <button class="btn btn-primary text-white px-4" type="submit" style="font-weight: 600;">검색</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 카테고리 칩 -->
+    <div class="d-flex gap-2 mb-4 overflow-auto pb-2 category-scroll">
+        <a href="{% url 'board:list' %}{% if search_query %}?q={{ search_query }}{% endif %}"
+            class="btn rounded-pill {% if not current_category %}btn-primary text-white{% else %}btn-secondary text-dark{% endif %} btn-sm px-3"
+            style="border-radius: 20px; font-size: 0.9rem;">전체</a>
+        {% for category in categories %}
+        <a href="{% url 'board:list' %}?category={{ category.id }}{% if search_query %}&q={{ search_query }}{% endif %}"
+            class="btn rounded-pill {% if current_category == category.id %}btn-primary text-white{% else %}btn-secondary text-dark{% endif %} btn-sm px-3"
+            style="border-radius: 20px; font-size: 0.9rem;">
+            {{ category.name }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- 게시글 목록 -->
+    <div class="d-flex flex-column gap-3">
+        {% for post in posts %}
+        <a href="{% url 'board:detail' post.id %}" class="text-decoration-none text-dark">
+            <div class="card h-100 border-0 shadow-sm post-card-hover" style="border-radius: var(--radius-md);">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        {% load board_extras %}
+                        <span class="badge" style="background: var(--color-primary-light); color: var(--color-olive);">
+                            {{ post.category.name }}
+                        </span>
+                        <small class="text-muted">{{ post.created_at|custom_timesince }}</small>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">{{ post.title }}</h5>
+                    <p class="card-text text-muted small mb-4">{{ post.content|truncatewords:20 }}</p>
+
+                    <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                        <div class="d-flex gap-3 text-muted small">
+                            <span><i class="fa-regular fa-thumbs-up"></i> {{ post.like_count }}</span>
+                            <span><i class="fa-regular fa-eye"></i> {{ post.view_count }}</span>
+                            <span><i class="fa-regular fa-comment"></i> {{ post.comment_count }}</span>
+                        </div>
+                        <div class="text-muted small">
+                            <i class="fa-solid fa-lock"></i> 익명
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <div class="text-center py-5 bg-light rounded text-muted">
+            <p class="mb-0">게시물이 없습니다.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 글쓰기 모달 -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="createModalLabel">익명 글쓰기</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createPostForm" data-url="{% url 'board:create' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">카테고리</label>
+                        <div class="d-flex gap-2 flex-wrap">
+                            {% for category in categories %}
+                            <input type="radio" class="btn-check" name="category" id="cat_{{ category.id }}"
+                                value="{{ category.id }}" required>
+                            <label class="btn btn-outline-success rounded-pill btn-sm px-3"
+                                for="cat_{{ category.id }}">{{ category.name }}</label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-bold">제목</label>
+                        <input type="text" class="form-control" style="background: var(--color-bg);" id="title"
+                            name="title" placeholder="제목을 입력해 주세요" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label fw-bold">내용</label>
+                        <textarea class="form-control" style="background: var(--color-bg);" id="content" name="content"
+                            rows="6" placeholder="고민이나 질문을 자유롭게 작성해 주세요. 완전한 익명으로 처리됩니다." required></textarea>
+                    </div>
+                    <div class="alert alert-warning d-flex align-items-center py-2" role="alert"
+                        style="background: #fcf8e3; border: none; color: #8a6d3b;">
+                        <i class="fa-solid fa-lock me-2"></i>
+                        <small>작성자 정보는 완전히 익명으로 처리됩니다.</small>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" class="btn-secondary" data-bs-dismiss="modal"
+                            style="flex: 0 0 auto;">취소</button>
+                        <button type="submit" class="btn-primary">게시하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'board/js/board.js' %}?v=6"></script>
+{% endblock %}

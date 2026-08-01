@@ -37,3 +37,25 @@ class PostLike(models.Model):
 
     def __str__(self):
         return f"{self.user} likes {self.post}"
+
+class Report(models.Model):
+    """
+    게시글 신고 내역을 저장하는 모델입니다.
+    어느 사용자가 어떤 게시글을 무슨 사유로 신고했는지 기록합니다.
+    """
+    STATUS_CHOICES = (
+        ('PENDING', '대기중'),
+        ('RESOLVED', '처리완료'),
+        ('REJECTED', '반려'),
+    )
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="reports") # 신고된 게시글
+    reporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="post_reports") # 신고자
+    reason = models.TextField() # 신고 사유
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING') # 처리 상태
+    created_at = models.DateTimeField(auto_now_add=True) # 신고 일시
+
+    class Meta:
+        unique_together = ("post", "reporter") # 중복 신고 방지
+
+    def __str__(self):
+        return f"Report by {self.reporter} on {self.post}"
