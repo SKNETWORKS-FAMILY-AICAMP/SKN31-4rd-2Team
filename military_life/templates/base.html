@@ -1,9 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ko">
-{% load static %}
-<!DOCTYPE html>
-<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
@@ -62,46 +59,4 @@
     {% block extra_js %}{% endblock %}
 </body>
 
-</html>
-<body>
-
-<header class="navbar">
-    <a href="{% url 'home:home' %}" class="navbar__brand">
-        <span class="navbar__logo">🛡️</span>
-        <span>진격의 박병장</span>
-    </a>
-
-    <nav class="navbar__menu">
-        <a href="{% url 'home:home' %}"
-           class="navbar__item {% block nav_home_active %}{% endblock %}">
-            <span class="icon">🏠</span> 홈
-        </a>
-        <a href="{% url 'chatbot:chat' %}"
-           class="navbar__item {% block nav_chatbot_active %}{% endblock %}">
-            <span class="icon">💬</span> 챗봇
-        </a>
-        <a href="{% url 'records:records' %}"
-           class="navbar__item {% block nav_records_active %}{% endblock %}">
-            <span class="icon">📖</span> 개인 기록
-        </a>
-        <a href="{% url 'board:list' %}"
-           class="navbar__item {% block nav_board_active %}{% endblock %}">
-            <span class="icon">👥</span> 커뮤니티
-        </a>
-    </nav>
-
-    <div class="navbar__actions">
-        <button class="icon-btn" title="알림">🔔</button>
-        {# TODO(account팀): 로그인 상태에 따라 로그인/로그아웃 링크 분기 #}
-        <a class="icon-btn" href="{% url 'account:logout' %}" title="로그아웃">↪</a>
-    </div>
-</header>
-
-<main class="page">
-    {% block content %}{% endblock %}
-</main>
-
-<script src="{% static 'js/main.js' %}"></script>
-{% block extra_js %}{% endblock %}
-</body>
 </html>
