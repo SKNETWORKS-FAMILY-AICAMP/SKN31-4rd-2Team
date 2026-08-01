@@ -10,10 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# .env는 프로젝트 루트(BASE_DIR)에 둔다. settings.py가 로드되는 시점에
+# 딱 한 번만 읽어서, 다른 모듈(chatbot/tools.py 등)은 os.environ이나
+# dotenv를 직접 건드리지 않고 여기서 만든 settings 변수만 참조한다.
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -120,5 +128,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
-STATICFILES_DIRS = [BASE_DIR / "static"] 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
+# ---------------------------------------------------------------------------
+# 챗봇(LangChain/LangGraph) 관련 설정 - .env에서 읽어온다.
+# chatbot/tools.py, chatbot/chatbot.py 같은 모듈은 os.environ이나 dotenv를
+# 직접 부르지 말고, `from django.conf import settings` 후
+# settings.OPENAI_API_KEY 처럼 여기 값만 가져다 쓸 것.
+# ---------------------------------------------------------------------------
+
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
+NEO4J_URI = os.environ.get("NEO4J_URI")
+NEO4J_DATABASE = os.environ.get("NEO4J_DATABASE", "neo4j")
+NEO4J_USERNAME = os.environ.get("NEO4J_USERNAME")
+NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD")

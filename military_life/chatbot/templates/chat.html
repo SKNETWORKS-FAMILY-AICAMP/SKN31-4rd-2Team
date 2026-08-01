@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{# base.html 경로가 다르면(예: common/base.html) 위 extends 경로만 맞게 고치세요 #}
+
+{% block title %}박병장 상담소 - 진격의 박병장{% endblock %}
+
+{% block nav_chatbot_active %}active{% endblock %}
+{# base.html에서 실제 active 클래스명이 다르면 여기만 맞게 바꾸세요 #}
+
+{% block extra_css %}
+<style>
+  .chat-page { max-width: 640px; margin: 0 auto; padding: 24px 0; }
+  #messages { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+  .bubble { padding: 10px 14px; border-radius: 10px; white-space: pre-wrap; line-height: 1.5; }
+  .human { align-self: flex-end; background: #d6e8ff; }
+  .ai { align-self: flex-start; background: #f0f0f0; }
+  .status { align-self: flex-start; color: #888; font-size: 13px; }
+  #form { display: flex; gap: 8px; }
+  #input { flex: 1; padding: 8px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-page">
+  <h2>박병장 상담소</h2>
+  <div id="messages"></div>
+
+  <form id="form">
+    <input id="input" type="text" placeholder="질문을 입력하세요" autocomplete="off" />
+    <button type="submit">전송</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// app_name = "chatbot"으로 네임스페이스가 걸려있어서 'chatbot:xxx'로 참조.
+const NEW_STREAM_URL = "{% url 'chatbot:chat-stream-new' %}";
+const STREAM_URL_TEMPLATE = "{% url 'chatbot:chat-stream' conversation_id='00000000-0000-0000-0000-000000000000' %}";
+
+let conversationId = null;
+
+const messagesEl = document.getElementById("messages");
+const formEl = document.getElementById("form");
+const inputEl = document.getElementById("input");
+
+function addBubble(role, text) {
+  const div = document.createElement("div");
+  div.className = "bubble " + role;
+  div.textContent = text;
+  messagesEl.appendChild(div);
+  window.scrollTo(0, document.body.scrollHeight);
+  return div;
+}
+
+function addStatus(text) {
+  const div = document.createElement("div");
+  div.className = "status";
+  div.textContent = text;
+  messagesEl.appendChild(div);
+  return div;
+}
+
+formEl.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const message = inputEl.value.trim();
+  if (!message) return;
+  inputEl.value = "";
+
+  addBubble("human", message);
+  const aiBubble = addBubble("ai", "");
+  let statusEl = null;
+
+  const url = conversationId
+    ? STREAM_URL_TEMPLATE.replace("00000000-0000-0000-0000-000000000000", conversationId)
+    : NEW_STREAM_URL;
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message }),
+  });
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    // SSE 이벤트는 "\n\n"으로 구분됨
+    const parts = buffer.split("\n\n");
+    buffer = parts.pop(); // 마지막 조각은 아직 안 끝났을 수 있으니 남겨둠
+
+    for (const part of parts) {
+      const line = part.trim();
+      if (!line.startsWith("data:")) continue;
+      const payload = JSON.parse(line.slice(5).trim());
+
+      if (payload.type === "meta") {
+        conversationId = payload.conversation_id;
+      } else if (payload.type === "token") {
+        aiBubble.textContent += payload.content;
+      } else if (payload.type === "tool_start") {
+        if (statusEl) statusEl.remove();
+        statusEl = addStatus(`🔍 ${payload.tool} 검색 중...`);
+      } else if (payload.type === "tool_end") {
+        if (statusEl) { statusEl.remove(); statusEl = null; }
+      } else if (payload.type === "error") {
+        aiBubble.textContent += `\n[오류] ${payload.message}`;
+      } else if (payload.type === "done") {
+        if (statusEl) { statusEl.remove(); statusEl = null; }
+      }
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+  }
+});
+</script>
+{% endblock %}
