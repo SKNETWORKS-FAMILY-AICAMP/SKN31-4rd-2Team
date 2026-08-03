@@ -5,7 +5,7 @@
 {% block nav_board_active %}active{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'board/css/board.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'board/css/board.css' %}?v=5">
 {% endblock %}
 
 {% block content %}
@@ -16,8 +16,8 @@
             <h1 class="h3 fw-bold mb-1">익명 게시판</h1>
             <p class="text-muted mb-0 small">같은 상황의 동료들과 정보를 공유해요</p>
         </div>
-        <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
-            <i class="bi bi-plus-lg"></i> 글쓰기
+        <button class="board-btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+            <i class="fa-solid fa-plus"></i> 글쓰기
         </button>
     </div>
 
@@ -27,14 +27,13 @@
             {% if current_category %}
             <input type="hidden" name="category" value="{{ current_category }}">
             {% endif %}
-            <div class="input-group shadow-sm" style="border-radius: var(--radius-md); overflow: hidden;">
-                <span class="input-group-text border-end-0 text-muted border-0" style="background: var(--color-bg);">
-                    <i class="bi bi-search"></i>
+            <div class="input-group search-container-custom overflow-hidden">
+                <span class="input-group-text border-end-0 text-muted border-0 bg-transparent">
+                    <i class="fa-solid fa-magnifying-glass"></i>
                 </span>
-                <input type="text" class="form-control border-start-0 border-0"
-                    style="background: var(--color-bg); box-shadow: none;" name="q" placeholder="게시물 검색..."
-                    value="{{ search_query }}">
-                <button class="btn btn-primary text-white px-4" type="submit" style="font-weight: 600;">검색</button>
+                <input type="text" class="form-control border-start-0 border-0 bg-transparent" style="box-shadow: none;"
+                    name="q" placeholder="게시물 검색..." value="{{ search_query }}">
+                <button class="board-btn-primary px-4" type="submit">검색</button>
             </div>
         </form>
     </div>
@@ -42,12 +41,12 @@
     <!-- 카테고리 칩 -->
     <div class="d-flex gap-2 mb-4 overflow-auto pb-2 category-scroll">
         <a href="{% url 'board:list' %}{% if search_query %}?q={{ search_query }}{% endif %}"
-            class="btn rounded-pill {% if not current_category %}btn-primary text-white{% else %}btn-secondary text-dark{% endif %} btn-sm px-3"
-            style="border-radius: 20px; font-size: 0.9rem;">전체</a>
+            class="rounded-pill {% if not current_category %}board-btn-primary{% else %}board-btn-secondary{% endif %}"
+            style="padding: 6px 14px;">전체</a>
         {% for category in categories %}
         <a href="{% url 'board:list' %}?category={{ category.id }}{% if search_query %}&q={{ search_query }}{% endif %}"
-            class="btn rounded-pill {% if current_category == category.id %}btn-primary text-white{% else %}btn-secondary text-dark{% endif %} btn-sm px-3"
-            style="border-radius: 20px; font-size: 0.9rem;">
+            class="rounded-pill {% if current_category == category.id %}board-btn-primary{% else %}board-btn-secondary{% endif %}"
+            style="padding: 6px 14px;">
             {{ category.name }}
         </a>
         {% endfor %}
@@ -71,12 +70,12 @@
 
                     <div class="d-flex justify-content-between align-items-center border-top pt-3">
                         <div class="d-flex gap-3 text-muted small">
-                            <span><i class="bi bi-hand-thumbs-up"></i> {{ post.like_count }}</span>
-                            <span><i class="bi bi-eye"></i> {{ post.view_count }}</span>
-                            <span><i class="bi bi-chat"></i> {{ post.comment_count }}</span>
+                            <span><i class="fa-regular fa-thumbs-up"></i> {{ post.like_count }}</span>
+                            <span><i class="fa-regular fa-eye"></i> {{ post.view_count }}</span>
+                            <span><i class="fa-regular fa-comment"></i> {{ post.comment_count }}</span>
                         </div>
                         <div class="text-muted small">
-                            <i class="bi bi-lock-fill"></i> 익명
+                            <i class="fa-solid fa-lock"></i> 익명
                         </div>
                     </div>
                 </div>
@@ -124,13 +123,12 @@
                     </div>
                     <div class="alert alert-warning d-flex align-items-center py-2" role="alert"
                         style="background: #fcf8e3; border: none; color: #8a6d3b;">
-                        <i class="bi bi-lock-fill me-2"></i>
+                        <i class="fa-solid fa-lock me-2"></i>
                         <small>작성자 정보는 완전히 익명으로 처리됩니다.</small>
                     </div>
                     <div class="d-flex justify-content-end gap-2 mt-4">
-                        <button type="button" class="btn-secondary" data-bs-dismiss="modal"
-                            style="flex: 0 0 auto;">취소</button>
-                        <button type="submit" class="btn-primary">게시하기</button>
+                        <button type="button" class="board-btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="submit" class="board-btn-primary">게시하기</button>
                     </div>
                 </form>
             </div>

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}회원 정보 수정 - 진격의 박병장{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex align-items-start gap-3">
+    <a href="{% url 'home:home' %}" class="page-back"><i class="bi bi-chevron-left"></i></a>
+    <div>
+        <h1>회원 정보 수정</h1>
+        <p>개인 정보를 수정할 수 있습니다</p>
+    </div>
+</div>
+
+<div class="settings-card">
+    <div class="settings-card__header">
+        <div class="d-flex align-items-center gap-2">
+            <span class="rank-badge">{{ profile.rank }}</span>
+            <strong>{{ user.username }}</strong>
+        </div>
+        <span>{{ profile.status }}</span>
+    </div>
+
+    <div class="settings-card__body">
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <form method="post" id="update-form" novalidate>
+            {% csrf_token %}
+
+            <div class="form-field">
+                <label>아이디</label>
+                <input type="text" value="{{ user.username }}" disabled>
+            </div>
+
+            <div class="form-field">
+                <label for="{{ form.new_password1.id_for_label }}">새 비밀번호</label>
+                {{ form.new_password1 }}
+            </div>
+
+            <div class="form-field">
+                <label for="{{ form.new_password2.id_for_label }}">비밀번호 확인</label>
+                {{ form.new_password2 }}
+            </div>
+
+            <div class="form-field">
+                <label>신분</label>
+                <div class="identity-select">
+                    <label class="identity-option disabled {% if profile.status == '병사' %}force-active{% endif %}" data-identity="병사">
+                        <span class="identity-option__icon"><i class="bi bi-shield-fill"></i></span>
+                        <span class="identity-option__label">병사</span>
+                    </label>
+                    <label class="identity-option disabled {% if profile.status == '간부' %}force-active{% endif %}" data-identity="간부">
+                        <span class="identity-option__icon"><i class="bi bi-award"></i></span>
+                        <span class="identity-option__label">간부</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label>계급</label>
+                {% if is_enlisted %}
+                <div class="rank-select">
+                    {% for value, text in form.fields.rank.choices %}
+                    <label class="rank-option">
+                        <input type="radio" name="rank" value="{{ value }}"
+                               {% if form.rank.value == value %}checked{% endif %}>
+                        {{ text }}
+                    </label>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {% for group_name, group_choices in form.fields.officer_rank.choices %}
+                <div class="rank-group">
+                    <div class="rank-group__label">{{ group_name }}</div>
+                    <div class="rank-select">
+                        {% for value, text in group_choices %}
+                        <label class="rank-option rank-option--officer">
+                            <input type="radio" name="officer_rank" value="{{ value }}"
+                                   {% if form.officer_rank.value == value %}checked{% endif %}>
+                            {{ text }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <div class="settings-card__footer">
+        <button type="submit" form="update-form" class="btn-primary">
+            <i class="bi bi-pencil"></i> 수정
+        </button>
+        <form method="post" action="{% url 'account:delete' %}"
+              onsubmit="return confirm('정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');"
+              style="flex:1;">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger-outline" style="width:100%;">
+                <i class="bi bi-trash"></i> 탈퇴
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

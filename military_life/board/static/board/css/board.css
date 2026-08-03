@@ -78,3 +78,65 @@
     display: none;
     /* Chrome, Safari and Opera */
 }
+
+/* 게시판 전용 버튼 및 검색바 독립 스타일 */
+.board-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background-color: #7c5aa9;
+    color: #ffffff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    width: auto;
+    text-decoration: none;
+}
+
+.board-btn-primary:hover,
+.board-btn-primary:focus,
+.board-btn-primary:active {
+    background-color: #9568d0;
+    color: #ffffff;
+    box-shadow: none;
+}
+
+.board-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background-color: #ffffff;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    padding: 6px 14px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    width: auto;
+    text-decoration: none;
+}
+
+.board-btn-secondary:hover,
+.board-btn-secondary:focus,
+.board-btn-secondary:active {
+    background-color: #f8f9fa;
+    border-color: #cccccc;
+    color: #333333;
+    box-shadow: none;
+}
+
+/* 검색바 강조 스타일 */
+.search-container-custom {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: var(--radius-md);
+}

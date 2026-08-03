@@ -12,6 +12,8 @@
     --color-text: #222222;
     --color-text-muted: #6b6b6b;
     --color-border: #e2e0d8;
+    --color-officer: #6b4a2f;       /* 간부 테마 강조색 */
+    --color-officer-light: #faf3e3;
     --radius-md: 12px;
     --radius-lg: 20px;
 }
@@ -95,7 +97,50 @@ a { text-decoration: none; color: inherit; }
     font-size: 1.1rem;
     cursor: pointer;
 }
- 
+
+/* ---------------- 프로필 드롭다운(회원정보수정 / 내가 쓴 게시글) ---------------- */
+.navbar__profile {
+    position: relative;
+}
+
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: 200px;
+    background: #fff;
+    border-radius: var(--radius-md);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    z-index: 200;
+}
+
+.profile-dropdown.active {
+    display: block;
+}
+
+.profile-dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.profile-dropdown__item:hover {
+    background: var(--color-bg);
+}
+
+.profile-dropdown__divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: 4px 4px;
+}
+
 /* ---------------- Layout ---------------- */
 .page {
     max-width: 1200px;
@@ -111,6 +156,12 @@ a { text-decoration: none; color: inherit; }
 .page-header p {
     margin: 0 0 24px;
     color: var(--color-text-muted);
+}
+
+.page-back {
+    font-size: 1.4rem;
+    color: var(--color-text-muted);
+    margin-top: 4px;
 }
  
 /* ---------------- Buttons ---------------- */
@@ -140,6 +191,24 @@ a { text-decoration: none; color: inherit; }
     background: #fff;
     cursor: pointer;
     font-weight: 600;
+}
+
+.btn-danger-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 22px;
+    border-radius: var(--radius-md);
+    border: 1px solid #e0a9a9;
+    background: #fdf1f1;
+    color: #c0392b;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-danger-outline:hover {
+    background: #fbe4e4;
 }
  
 /* ---------------- Tabs (records / chatbot 사이드바 등 공용 컴포넌트) ---------------- */
@@ -225,3 +294,446 @@ a { text-decoration: none; color: inherit; }
     gap: 12px;
 }
 .modal-box__footer .btn-primary { flex: 1; justify-content: center; }
+
+/* ==========================================================
+   로그인 / 회원가입 (account:login, account:signup)
+   ========================================================== */
+.auth-body-bg {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 15%, #3f5233 0%, #1c2a17 65%, #10160c 100%);
+    padding: 60px 20px;
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+
+.auth-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.auth-logo {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 3px solid var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    color: var(--color-primary);
+    margin-bottom: 20px;
+}
+
+.auth-title {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 6px;
+}
+
+.auth-subtitle {
+    color: #b9c4ad;
+    margin: 0 0 32px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.auth-tabs {
+    display: flex;
+}
+
+.auth-tabs__item {
+    flex: 1;
+    text-align: center;
+    padding: 18px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    background: #fff;
+}
+
+.auth-tabs__item.active {
+    background: var(--color-dark-green);
+    color: #fff;
+}
+
+.auth-body {
+    padding: 32px 28px 36px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.form-field { margin-bottom: 20px; }
+.form-field label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.form-field input[type="text"],
+.form-field input[type="password"],
+.form-field input[type="email"],
+.form-field input[type="date"] {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    font-family: inherit;
+}
+.form-field input:disabled {
+    color: var(--color-text-muted);
+}
+
+.btn-block {
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: none;
+    background: var(--color-dark-green);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.btn-block:hover { opacity: 0.92; }
+
+.auth-switch {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--color-text-muted);
+}
+.auth-switch a { color: var(--color-primary); font-weight: 700; }
+
+/* 신분 선택 (병사 / 간부) */
+.identity-select {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.identity-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+    padding: 18px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    background: #fff;
+    width: 100%;            
+    box-sizing: border-box;
+}
+.identity-option > * {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.identity-option__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eceae2;
+    color: #9a9a9a;
+    font-size: 1.2rem;
+}
+
+.identity-option__label {
+    font-weight: 700;
+}
+
+.identity-option:has(input:checked),
+.identity-option.force-active {
+    border-color: var(--color-dark-green);
+    background: var(--color-primary-light);
+}
+.identity-option:has(input:checked) .identity-option__icon,
+.identity-option.force-active .identity-option__icon {
+    background: var(--color-dark-green);
+    color: #fff;
+}
+
+/* 간부는 병사와 다른 강조색(브라운) 사용 */
+.identity-option[data-identity="간부"]:has(input:checked),
+.identity-option[data-identity="간부"].force-active {
+    border-color: var(--color-officer);
+    background: var(--color-officer-light);
+}
+.identity-option[data-identity="간부"]:has(input:checked) .identity-option__icon,
+.identity-option[data-identity="간부"].force-active .identity-option__icon {
+    background: var(--color-officer);
+    color: #fff;
+}
+
+.identity-option input { display: none; }
+.identity-option.disabled {
+    cursor: default;
+    pointer-events: none;
+}
+
+.mascot-tip {
+    background: var(--color-primary-light);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin: 16px 0;
+    font-size: 0.9rem;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.mascot-tip b { 
+    color: var(--color-dark-green); 
+    transition: color 0.2s ease;
+}
+
+/* 간부 선택 시 적용되는 스타일 */
+.mascot-tip.mascot-tip--officer {
+    background: var(--color-officer-light);
+}
+.mascot-tip.mascot-tip--officer b {
+    color: var(--color-officer);
+}
+
+/* 계급 선택 */
+.rank-select {
+    display: flex;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+.rank-option {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    padding: 10px 2px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: #fff;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.rank-option:has(input:checked) {
+    background: var(--color-dark-green);
+    color: #fff;
+    border-color: var(--color-dark-green);
+}
+.rank-option input { display: none; }
+
+/* 계급 그룹(부사관 / 장교) 라벨 */
+.rank-group { margin-bottom: 16px; }
+.rank-group:last-child { margin-bottom: 0; }
+.rank-group__label {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* 간부 계급 버튼은 브라운 강조색 사용 */
+.rank-option--officer:has(input:checked) {
+    background: var(--color-officer);
+    color: #fff;
+    border-color: var(--color-officer);
+}
+
+/* ==========================================================
+   회원 정보 수정 / 내가 쓴 게시글 (account:update, account:my_posts)
+   ========================================================== */
+.settings-card {
+    max-width: 640px;
+    margin: 0 auto;
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.settings-card__header {
+    background: var(--color-dark-green);
+    color: #fff;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings-card__body {
+    padding: 32px 28px 8px;
+}
+
+.settings-card__footer {
+    display: flex;
+    gap: 12px;
+    padding: 0 28px 28px;
+}
+
+.settings-card__footer .btn-primary,
+.settings-card__footer .btn-danger-outline {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+}
+
+.my-post-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.my-post-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.my-post-card__category {
+    background: var(--color-primary-light);
+    color: var(--color-dark-green);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+.my-post-card__time {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+}
+
+.my-post-card__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.my-post-card__excerpt {
+    color: #555;
+    margin: 0 0 16px;
+}
+
+.my-post-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--color-border);
+    padding-top: 14px;
+}
+
+.my-post-card__stats {
+    display: flex;
+    gap: 18px;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+.my-post-card__delete {
+    color: #c0392b;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: 80px 20px;
+}
+
+/* ==========================================================
+   토스트 알림 (공용 - account:update 등 저장 성공/실패 안내)
+   ========================================================== */
+.app-toast-container {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.app-toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+    font-size: 0.9rem;
+    min-width: 260px;
+    max-width: 360px;
+    animation: toast-in 0.25s ease;
+}
+
+.app-toast--success { border-left-color: var(--color-primary); }
+.app-toast--success i { color: var(--color-primary); }
+
+.app-toast--error { border-left-color: #c0392b; }
+.app-toast--error i { color: #c0392b; }
+
+.app-toast--warning { border-left-color: #b98900; }
+.app-toast--warning i { color: #b98900; }
+
+.app-toast--info,
+.app-toast--debug {
+    border-left-color: var(--color-dark-green);
+}
+.app-toast--info i,
+.app-toast--debug i {
+    color: var(--color-dark-green);
+}
+
+.app-toast__close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0;
+}
+
+.app-toast.app-toast--hide {
+    animation: toast-out 0.25s ease forwards;
+}
+
+@keyframes toast-in {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes toast-out {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-20px); opacity: 0; }
+}
