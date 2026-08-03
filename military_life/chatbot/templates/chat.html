@@ -6,461 +6,47 @@
 {% block nav_chatbot_active %}active{% endblock %}
 
 {% block extra_css %}
-<style>
-  /* ==============================
-     프로젝트 내부 글꼴 불러오기
-  ============================== */
-
-  @font-face {
-    font-family: "ROKA Bold";
-    src: url("{% static 'fonts/roka-bold.ttf' %}") format("truetype");
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-  }
-
-
-  /* ==============================
-     전체 채팅 페이지
-  ============================== */
-
-  .chat-page {
-    position: relative;
-
-    width: min(860px, calc(100% - 32px));
-    min-height: 620px;
-    margin: 40px auto;
-    padding: 30px;
-
-    background:
-      linear-gradient(
-        rgba(244, 243, 236, 0.72),
-        rgba(244, 243, 236, 0.72)
-      ),
-      url("{% static 'images/camouflage_bg.png' %}");
-
-    background-repeat: repeat;
-    background-position: center;
-    background-size: 500px auto;
-
-    border: 1px solid rgba(54, 75, 47, 0.18);
-    border-radius: 18px;
-
-    box-shadow:
-      0 12px 32px rgba(24, 34, 21, 0.18);
-
-    overflow: hidden;
-  }
-
-
-  /* ==============================
-     군용 제목 배너
-  ============================== */
-
-  .chat-title-wrap {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    width: min(720px, 94%);
-    margin: 0 auto 30px;
-    padding: 18px 28px;
-
-    background:
-      repeating-linear-gradient(
-        45deg,
-        rgba(0, 0, 0, 0.15),
-        rgba(0, 0, 0, 0.15) 10px,
-        transparent 10px,
-        transparent 20px
-      ),
-      linear-gradient(
-        180deg,
-        #1c2918 0%,
-        #0f170d 50%,
-        #080c07 100%
-      );
-
-    border: 3px solid #5a7343;
-    border-radius: 8px;
-
-    box-shadow:
-      inset 0 0 15px rgba(0, 0, 0, 0.9),
-      inset 0 2px 1px rgba(255, 255, 255, 0.2),
-      0 8px 20px rgba(0, 0, 0, 0.5);
-  }
-
-
-  /* ==============================
-     박병장 상담소 제목
-  ============================== */
-
-  .chat-title {
-    margin: 0;
-
-    text-align: center;
-
-    font-family:
-      "ROKA Bold",
-      "Malgun Gothic",
-      sans-serif;
-
-    font-size: clamp(38px, 5.5vw, 60px);
-    font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: 3px;
-
-    color: #f1cf58;
-
-    background:
-      linear-gradient(
-        180deg,
-        #fff8c8 0%,
-        #f5d765 32%,
-        #c99a26 70%,
-        #7a5a13 100%
-      );
-
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-
-    -webkit-text-stroke: 1px rgba(224, 234, 207, 0.8);
-
-    filter:
-      drop-shadow(0 3px 0 #0a0e08)
-      drop-shadow(2px 2px 0 #000000)
-      drop-shadow(-1px -1px 0 #1a2614);
-
-    transform: skewX(-1deg);
-  }
-
-
-  /* ==============================
-     메시지 출력 영역
-  ============================== */
-
-  #messages {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-
-    min-height: 360px;
-    max-height: 540px;
-    margin-bottom: 18px;
-    padding: 18px;
-
-    overflow-y: auto;
-
-    background: rgba(255, 255, 255, 0.34);
-    border: 1px solid rgba(57, 78, 50, 0.08);
-    border-radius: 14px;
-
-    scroll-behavior: smooth;
-  }
-
-
-  /* ==============================
-     메시지 한 줄
-  ============================== */
-
-  .message-row {
-    display: flex;
-    width: 100%;
-  }
-
-  .message-row--human {
-    justify-content: flex-end;
-  }
-
-  .message-row--ai {
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 11px;
-  }
-
-
-  /* ==============================
-     박병장 프로필
-  ============================== */
-
-  .bot-profile {
-    width: 48px;
-    height: 48px;
-    flex: 0 0 48px;
-
-    object-fit: cover;
-    object-position: center 30%;
-
-    background-color: #465f38;
-
-    border: 2px solid #617c4e;
-    border-radius: 50%;
-
-    box-shadow:
-      0 3px 8px rgba(33, 48, 28, 0.2);
-  }
-
-
-  /* ==============================
-     AI 이름과 말풍선
-  ============================== */
-
-  .ai-content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-
-    max-width: 76%;
-  }
-
-  .bot-name {
-    padding-left: 3px;
-
-    color: #34472e;
-
-    font-size: 14px;
-    font-weight: 700;
-  }
-
-
-  /* ==============================
-     말풍선 공통
-  ============================== */
-
-  .bubble {
-    box-sizing: border-box;
-
-    padding: 13px 17px;
-
-    line-height: 1.6;
-
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    word-break: keep-all;
-  }
-
-
-  /* 사용자 말풍선 */
-
-  .human {
-    max-width: 72%;
-
-    color: #182016;
-    background: #d8e9c9;
-
-    border: 1px solid rgba(77, 108, 59, 0.16);
-    border-radius: 16px 4px 16px 16px;
-
-    box-shadow:
-      0 2px 8px rgba(38, 54, 32, 0.08);
-  }
-
-
-  /* AI 말풍선 */
-
-  .ai {
-    max-width: 100%;
-
-    color: #20251e;
-    background: #ffffff;
-
-    border: 1px solid rgba(53, 72, 47, 0.13);
-    border-radius: 4px 16px 16px 16px;
-
-    box-shadow:
-      0 3px 12px rgba(38, 52, 33, 0.09);
-  }
-
-
-  /* ==============================
-     검색 상태
-  ============================== */
-
-  .status {
-    margin-left: 59px;
-    padding: 7px 12px;
-
-    color: #687064;
-    background: rgba(255, 255, 255, 0.7);
-
-    border-radius: 10px;
-
-    font-size: 13px;
-  }
-
-
-  /* ==============================
-     입력 영역
-  ============================== */
-
-  #form {
-    display: flex;
-    gap: 10px;
-
-    padding: 12px;
-
-    background: rgba(255, 255, 255, 0.86);
-    border: 1px solid rgba(55, 75, 48, 0.13);
-    border-radius: 12px;
-
-    box-shadow:
-      0 4px 16px rgba(37, 51, 31, 0.07);
-  }
-
-  #input {
-    flex: 1;
-    min-width: 0;
-
-    padding: 13px 15px;
-
-    color: #222920;
-    background: #ffffff;
-
-    border: 1px solid #aeb7a8;
-    border-radius: 8px;
-
-    font-size: 16px;
-
-    outline: none;
-  }
-
-  #input:focus {
-    border-color: #6d934e;
-
-    box-shadow:
-      0 0 0 3px rgba(109, 147, 78, 0.14);
-  }
-
-  #form button {
-    min-width: 68px;
-    padding: 0 18px;
-
-    color: #ffffff;
-    background: #4f7638;
-
-    border: none;
-    border-radius: 8px;
-
-    font-size: 16px;
-    font-weight: 700;
-
-    cursor: pointer;
-  }
-
-  #form button:hover {
-    background: #3e612c;
-  }
-
-  #form button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-
-  /* ==============================
-     스크롤바
-  ============================== */
-
-  #messages::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  #messages::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  #messages::-webkit-scrollbar-thumb {
-    background: rgba(62, 87, 50, 0.25);
-    border-radius: 10px;
-  }
-
-
-  /* ==============================
-     반응형
-  ============================== */
-
-  @media (max-width: 700px) {
-    .chat-page {
-      width: calc(100% - 20px);
-      min-height: 560px;
-      margin: 16px auto;
-      padding: 18px 14px;
-    }
-
-    .chat-title-wrap {
-      width: 94%;
-      margin-bottom: 22px;
-      padding: 14px 12px;
-    }
-
-    .chat-title {
-      font-size: clamp(28px, 8vw, 42px);
-      letter-spacing: 1px;
-
-      -webkit-text-stroke: 0.5px rgba(224, 234, 207, 0.8);
-    }
-
-    #messages {
-      padding: 14px 10px;
-    }
-
-    .bot-profile {
-      width: 40px;
-      height: 40px;
-      flex-basis: 40px;
-    }
-
-    .ai-content {
-      max-width: calc(100% - 52px);
-    }
-
-    .human {
-      max-width: 84%;
-    }
-
-    .status {
-      margin-left: 51px;
-    }
-
-    #form {
-      padding: 9px;
-    }
-
-    #form button {
-      min-width: 58px;
-      padding: 0 12px;
-    }
-  }
-</style>
+<link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
 {% endblock %}
 
 
 {% block content %}
-<div class="chat-page">
+<div class="chat-layout">
 
-  <div class="chat-title-wrap">
-    <h2 class="chat-title">박병장 상담소</h2>
+  <aside class="chat-sidebar">
+    <button id="new-chat-btn" type="button">+ 새 대화</button>
+    <ul id="conversation-list">
+      {% for conv in conversations %}
+      <li class="conversation-item" data-id="{{ conv.id }}">{{ conv.title|default:"새 대화" }}</li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <div class="chat-page">
+
+    <div class="chat-title-wrap">
+      <h2 class="chat-title">박병장 상담소</h2>
+    </div>
+
+    <div id="messages"></div>
+
+    <form id="form">
+      <input
+        id="input"
+        type="text"
+        placeholder="질문을 입력하세요"
+        autocomplete="off"
+      />
+
+      <button
+        id="submit-button"
+        type="submit"
+      >
+        전송
+      </button>
+    </form>
+
   </div>
-
-  <div id="messages"></div>
-
-  <form id="form">
-    <input
-      id="input"
-      type="text"
-      placeholder="질문을 입력하세요"
-      autocomplete="off"
-    />
-
-    <button
-      id="submit-button"
-      type="submit"
-    >
-      전송
-    </button>
-  </form>
 
 </div>
 {% endblock %}
@@ -473,6 +59,15 @@ const NEW_STREAM_URL =
 
 const STREAM_URL_TEMPLATE =
   "{% url 'chatbot:chat-stream' conversation_id='00000000-0000-0000-0000-000000000000' %}";
+
+const CONVERSATION_LIST_URL =
+  "{% url 'chatbot:conversation-list' %}";
+
+const CONVERSATION_MESSAGES_TEMPLATE =
+  "{% url 'chatbot:conversation-messages' conversation_id='00000000-0000-0000-0000-000000000000' %}";
+
+const DUMMY_UUID =
+  "00000000-0000-0000-0000-000000000000";
 
 const BOT_PROFILE_IMAGE =
   "{% static 'images/bot_profile.png' %}";
@@ -490,6 +85,12 @@ const inputEl =
 
 const submitButtonEl =
   document.getElementById("submit-button");
+
+const conversationListEl =
+  document.getElementById("conversation-list");
+
+const newChatBtn =
+  document.getElementById("new-chat-btn");
 
 
 function addHumanBubble(text) {
@@ -596,6 +197,81 @@ function scrollToLatestMessage() {
   messagesEl.scrollTop =
     messagesEl.scrollHeight;
 }
+
+
+function setActiveConversation(id) {
+  conversationId = id;
+
+  document
+    .querySelectorAll(".conversation-item")
+    .forEach((el) => {
+      el.classList.toggle(
+        "active",
+        el.dataset.id === id
+      );
+    });
+}
+
+
+function renderConversationList(conversations) {
+  conversationListEl.innerHTML = "";
+
+  for (const conv of conversations) {
+    const li = document.createElement("li");
+    li.className =
+      "conversation-item" +
+      (conv.id === conversationId ? " active" : "");
+    li.dataset.id = conv.id;
+    li.textContent = conv.title || "새 대화";
+    conversationListEl.appendChild(li);
+  }
+}
+
+
+async function refreshSidebar() {
+  const res = await fetch(CONVERSATION_LIST_URL);
+  if (!res.ok) return;
+
+  const data = await res.json();
+  renderConversationList(data.conversations);
+}
+
+
+async function loadConversation(id) {
+  const res = await fetch(
+    CONVERSATION_MESSAGES_TEMPLATE.replace(DUMMY_UUID, id)
+  );
+  if (!res.ok) return;
+
+  const data = await res.json();
+
+  messagesEl.innerHTML = "";
+  for (const m of data.messages) {
+    if (m.role === "human") {
+      addHumanBubble(m.content);
+    } else {
+      addAiBubble(m.content);
+    }
+  }
+
+  setActiveConversation(id);
+}
+
+
+// 사이드바 클릭 (초기 렌더 + refreshSidebar로 다시 그려진 목록 둘 다 처리)
+conversationListEl.addEventListener("click", (e) => {
+  const item = e.target.closest(".conversation-item");
+  if (!item) return;
+  loadConversation(item.dataset.id);
+});
+
+
+// 새 대화 버튼: 화면만 비우고 conversationId를 null로 되돌림.
+// 실제 Conversation row는 다음 메시지를 보낼 때 새로 생성됨.
+newChatBtn.addEventListener("click", () => {
+  messagesEl.innerHTML = "";
+  setActiveConversation(null);
+});
 
 
 function setSubmitting(isSubmitting) {
@@ -728,8 +404,9 @@ formEl.addEventListener(
           if (
             payload.type === "meta"
           ) {
-            conversationId =
-              payload.conversation_id;
+            setActiveConversation(
+              payload.conversation_id
+            );
 
           } else if (
             payload.type === "token"
@@ -772,6 +449,7 @@ formEl.addEventListener(
               statusEl.remove();
               statusEl = null;
             }
+            refreshSidebar(); // 새 대화 제목/최근 순서 갱신
           }
 
           scrollToLatestMessage();

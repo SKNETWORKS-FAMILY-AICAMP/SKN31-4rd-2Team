@@ -36,6 +36,20 @@ from langgraph.checkpoint.memory import InMemorySaver
 from .tools import search_law_knowledge_graph, search_guidance_knowledge_base
 
 MODEL_NAME = "gpt-5.4-mini"
+TITLE_MODEL_NAME = "gpt-5.4-nano"  # 제목 요약처럼 가벼운 작업용 - 제일 싼 모델
+
+TITLE_PROMPT = """
+아래는 사용자가 챗봇에게 보낸 첫 질문이다.
+이 대화를 대표하는 짧은 제목을 만들어라.
+
+규칙:
+1. 10자 내외의 한글 명사구로 작성한다.
+2. 따옴표, 마침표, 이모지를 붙이지 않는다.
+3. 제목 한 줄만 출력한다. 다른 말은 절대 덧붙이지 않는다.
+
+질문:
+{question}
+"""
 
 SYSTEM_PROMPT = """
     당신은 군 생활의 모든 법률, 규정, 꼼수까지 마스터한 만렙 에이스 선임 '박병장'입니다.
@@ -192,6 +206,23 @@ class LangGraphChatbot:
             system_prompt=SYSTEM_PROMPT,
             checkpointer=self.checkpointer,
         )
+        # 대화 제목 요약 전용 - 별도의 가장 싼 모델로, max_tokens도 짧게 제한
+        self.title_llm = ChatOpenAI(
+            model=TITLE_MODEL_NAME, temperature=0, max_tokens=20, api_key=api_key
+        )
+
+    async def agenerate_title(self, user_query: str) -> str:
+        """대화방이 처음 생성될 때, 첫 질문만 보고 짧은 제목을 뽑는다.
+        (ChatGPT/Claude가 첫 턴에 대화 제목을 자동으로 붙이는 것과 같은 방식)
+        실패하면 원문을 잘라서 대체 - 제목 생성은 부가 기능이라 여기서 죽으면 안 됨."""
+        try:
+            result = await self.title_llm.ainvoke(
+                TITLE_PROMPT.format(question=user_query)
+            )
+            title = result.content.strip().strip('"').strip("'")
+            return title[:50] if title else user_query[:50]
+        except Exception:
+            return user_query[:50]
 
     async def astream(self, user_query: str, history: list[tuple[str, str]], thread_id: str):
         """

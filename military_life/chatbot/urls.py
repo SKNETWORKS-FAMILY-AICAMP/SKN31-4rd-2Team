@@ -15,4 +15,12 @@ urlpatterns = [
         views.chat_stream,
         name="chat-stream",
     ),
+    # 사이드바용 최근 대화 10개 (JSON)
+    path("conversations/", views.conversation_list, name="conversation-list"),
+    # 특정 대화방의 메시지 히스토리 (JSON)
+    path(
+        "conversations/<uuid:conversation_id>/messages/",
+        views.conversation_messages,
+        name="conversation-messages",
+    ),
 ]
