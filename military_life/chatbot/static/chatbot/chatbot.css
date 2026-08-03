@@ -106,3 +106,538 @@
     border-radius: var(--radius-md);
     cursor: pointer;
 }
+
+/* ==========================================================
+   박병장 상담소 - 챗봇 페이지 전용 스타일
+   static/css/chatbot.css 로 옮겨서 쓰세요.
+
+   주의: 이 파일은 순수 CSS라서 {% static %} 템플릿 태그를 못 씀.
+   그래서 font/image 경로는 이 css 파일 기준 "상대경로"로 써야 함.
+   static/css/chatbot.css, static/fonts/..., static/images/... 처럼
+   static 폴더 밑에 css/, fonts/, images/가 나란히 있다는 전제로
+   ../fonts/..., ../images/... 로 적어뒀음. 실제 폴더 구조가 다르면
+   이 상대경로만 맞게 고치면 됨.
+   ========================================================== */
+
+/* ==============================
+   프로젝트 내부 글꼴 불러오기
+============================== */
+
+@font-face {
+  font-family: "ROKA Bold";
+  src: url("../fonts/roka-bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/* ==============================
+   사이드바 + 채팅 페이지 레이아웃
+============================== */
+
+.chat-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+
+  width: min(1120px, calc(100% - 32px));
+  margin: 40px auto;
+}
+
+.chat-sidebar {
+  flex: 0 0 240px;
+
+  padding: 16px;
+
+  background: var(--color-card, #fff);
+  border: 1px solid var(--color-border, #e2e0d8);
+  border-radius: var(--radius-lg, 20px);
+
+  box-shadow: 0 8px 20px rgba(24, 34, 21, 0.08);
+}
+
+#new-chat-btn {
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+
+  color: #fff;
+  background: var(--color-primary, #6fa645);
+
+  border: none;
+  border-radius: var(--radius-md, 12px);
+
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#new-chat-btn:hover {
+  filter: brightness(0.95);
+}
+
+#conversation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  max-height: 560px;
+  overflow-y: auto;
+}
+
+.conversation-item {
+  padding: 10px 12px;
+
+  color: var(--color-text-muted, #6b6b6b);
+  border-radius: var(--radius-md, 12px);
+
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  cursor: pointer;
+}
+
+.conversation-item:hover {
+  background: var(--color-bg, #f2f1ec);
+}
+
+.conversation-item.active {
+  color: var(--color-text, #222);
+  background: var(--color-primary-light, #e7f0df);
+  font-weight: 700;
+}
+
+
+/* ==============================
+   전체 채팅 페이지
+============================== */
+
+.chat-page {
+  position: relative;
+
+  flex: 1;
+  min-width: 0;
+
+  width: 100%;
+  min-height: 620px;
+  margin: 0;
+  padding: 30px;
+
+  background:
+    linear-gradient(
+      rgba(244, 243, 236, 0.72),
+      rgba(244, 243, 236, 0.72)
+    ),
+    url("../images/camouflage_bg.png");
+
+  background-repeat: repeat;
+  background-position: center;
+  background-size: 500px auto;
+
+  border: 1px solid rgba(54, 75, 47, 0.18);
+  border-radius: 18px;
+
+  box-shadow:
+    0 12px 32px rgba(24, 34, 21, 0.18);
+
+  overflow: hidden;
+}
+
+
+/* ==============================
+   군용 제목 배너
+============================== */
+
+.chat-title-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: min(720px, 94%);
+  margin: 0 auto 30px;
+  padding: 18px 28px;
+
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15) 10px,
+      transparent 10px,
+      transparent 20px
+    ),
+    linear-gradient(
+      180deg,
+      #1c2918 0%,
+      #0f170d 50%,
+      #080c07 100%
+    );
+
+  border: 3px solid #5a7343;
+  border-radius: 8px;
+
+  box-shadow:
+    inset 0 0 15px rgba(0, 0, 0, 0.9),
+    inset 0 2px 1px rgba(255, 255, 255, 0.2),
+    0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+
+/* ==============================
+   박병장 상담소 제목
+============================== */
+
+.chat-title {
+  margin: 0;
+
+  text-align: center;
+
+  font-family:
+    "ROKA Bold",
+    "Malgun Gothic",
+    sans-serif;
+
+  font-size: clamp(38px, 5.5vw, 60px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 3px;
+
+  color: #f1cf58;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fff8c8 0%,
+      #f5d765 32%,
+      #c99a26 70%,
+      #7a5a13 100%
+    );
+
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  -webkit-text-stroke: 1px rgba(224, 234, 207, 0.8);
+
+  filter:
+    drop-shadow(0 3px 0 #0a0e08)
+    drop-shadow(2px 2px 0 #000000)
+    drop-shadow(-1px -1px 0 #1a2614);
+
+  transform: skewX(-1deg);
+}
+
+
+/* ==============================
+   메시지 출력 영역
+============================== */
+
+#messages {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  min-height: 360px;
+  max-height: 540px;
+  margin-bottom: 18px;
+  padding: 18px;
+
+  overflow-y: auto;
+
+  background: rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(57, 78, 50, 0.08);
+  border-radius: 14px;
+
+  scroll-behavior: smooth;
+}
+
+
+/* ==============================
+   메시지 한 줄
+============================== */
+
+.message-row {
+  display: flex;
+  width: 100%;
+}
+
+.message-row--human {
+  justify-content: flex-end;
+}
+
+.message-row--ai {
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 11px;
+}
+
+
+/* ==============================
+   박병장 프로필
+============================== */
+
+.bot-profile {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+
+  object-fit: cover;
+  object-position: center 30%;
+
+  background-color: #465f38;
+
+  border: 2px solid #617c4e;
+  border-radius: 50%;
+
+  box-shadow:
+    0 3px 8px rgba(33, 48, 28, 0.2);
+}
+
+
+/* ==============================
+   AI 이름과 말풍선
+============================== */
+
+.ai-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+
+  max-width: 76%;
+}
+
+.bot-name {
+  padding-left: 3px;
+
+  color: #34472e;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+/* ==============================
+   말풍선 공통
+============================== */
+
+.bubble {
+  box-sizing: border-box;
+
+  padding: 13px 17px;
+
+  line-height: 1.6;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+
+/* 사용자 말풍선 */
+
+.human {
+  max-width: 72%;
+
+  color: #182016;
+  background: #d8e9c9;
+
+  border: 1px solid rgba(77, 108, 59, 0.16);
+  border-radius: 16px 4px 16px 16px;
+
+  box-shadow:
+    0 2px 8px rgba(38, 54, 32, 0.08);
+}
+
+
+/* AI 말풍선 */
+
+.ai {
+  max-width: 100%;
+
+  color: #20251e;
+  background: #ffffff;
+
+  border: 1px solid rgba(53, 72, 47, 0.13);
+  border-radius: 4px 16px 16px 16px;
+
+  box-shadow:
+    0 3px 12px rgba(38, 52, 33, 0.09);
+}
+
+
+/* ==============================
+   검색 상태
+============================== */
+
+.status {
+  margin-left: 59px;
+  padding: 7px 12px;
+
+  color: #687064;
+  background: rgba(255, 255, 255, 0.7);
+
+  border-radius: 10px;
+
+  font-size: 13px;
+}
+
+
+/* ==============================
+   입력 영역
+============================== */
+
+#form {
+  display: flex;
+  gap: 10px;
+
+  padding: 12px;
+
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(55, 75, 48, 0.13);
+  border-radius: 12px;
+
+  box-shadow:
+    0 4px 16px rgba(37, 51, 31, 0.07);
+}
+
+#input {
+  flex: 1;
+  min-width: 0;
+
+  padding: 13px 15px;
+
+  color: #222920;
+  background: #ffffff;
+
+  border: 1px solid #aeb7a8;
+  border-radius: 8px;
+
+  font-size: 16px;
+
+  outline: none;
+}
+
+#input:focus {
+  border-color: #6d934e;
+
+  box-shadow:
+    0 0 0 3px rgba(109, 147, 78, 0.14);
+}
+
+#form button {
+  min-width: 68px;
+  padding: 0 18px;
+
+  color: #ffffff;
+  background: #4f7638;
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+#form button:hover {
+  background: #3e612c;
+}
+
+#form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* ==============================
+   스크롤바
+============================== */
+
+#messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+#messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#messages::-webkit-scrollbar-thumb {
+  background: rgba(62, 87, 50, 0.25);
+  border-radius: 10px;
+}
+
+
+/* ==============================
+   반응형
+============================== */
+
+@media (max-width: 700px) {
+  .chat-layout {
+    flex-direction: column;
+    width: calc(100% - 20px);
+    margin: 16px auto;
+  }
+
+  .chat-sidebar {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .chat-page {
+    width: 100%;
+    min-height: 560px;
+    margin: 16px auto;
+    padding: 18px 14px;
+  }
+
+  .chat-title-wrap {
+    width: 94%;
+    margin-bottom: 22px;
+    padding: 14px 12px;
+  }
+
+  .chat-title {
+    font-size: clamp(28px, 8vw, 42px);
+    letter-spacing: 1px;
+
+    -webkit-text-stroke: 0.5px rgba(224, 234, 207, 0.8);
+  }
+
+  #messages {
+    padding: 14px 10px;
+  }
+
+  .bot-profile {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+
+  .ai-content {
+    max-width: calc(100% - 52px);
+  }
+
+  .human {
+    max-width: 84%;
+  }
+
+  .status {
+    margin-left: 51px;
+  }
+
+  #form {
+    padding: 9px;
+  }
+
+  #form button {
+    min-width: 58px;
+    padding: 0 12px;
+  }
+}
