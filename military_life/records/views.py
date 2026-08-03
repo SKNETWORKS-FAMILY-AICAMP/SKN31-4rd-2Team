@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from .forms import GoalForm, JournalEntryForm
-from .models import Goal, JournalEntry, ServiceInfo
+from .models import Goal, JournalEntry
 
 # 일정 유형별 아이콘 (캘린더 화면에 표시)
 TYPE_EMOJI = {
@@ -70,20 +70,20 @@ def _handle_post(request):
 
 
 def _get_dday_context(request, today):
-    service_info = ServiceInfo.objects.filter(user=request.user).first()
-    if not service_info:
+    profile = getattr(request.user, "profile", None)
+    if not profile or not profile.enlist_date or not profile.discharge_date:
         return {"service_info": None}
 
-    total_days = (service_info.discharge_date - service_info.enlist_date).days
-    served_days = (today - service_info.enlist_date).days
-    remaining_days = (service_info.discharge_date - today).days
+    total_days = (profile.discharge_date - profile.enlist_date).days
+    served_days = (today - profile.enlist_date).days
+    remaining_days = (profile.discharge_date - today).days
 
     progress_percent = 0
     if total_days > 0:
         progress_percent = min(100, max(0, round(served_days / total_days * 100)))
 
     return {
-        "service_info": service_info,
+        "service_info": profile,
         "served_days": max(served_days, 0),
         "total_days": total_days,
         "remaining_days": remaining_days,

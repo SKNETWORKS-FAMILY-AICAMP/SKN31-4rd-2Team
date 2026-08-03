@@ -1,4 +1,4 @@
-/* records/static/records/records.js */
+/* records/static/records/js/records.js */
 
 document.addEventListener('DOMContentLoaded', function () {
 

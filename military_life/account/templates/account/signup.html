@@ -1,41 +1,149 @@
-{% extends 'base.html' %}
+{% extends 'base_auth.html' %}
 {% load static %}
 
 {% block title %}회원가입 - 진격의 박병장{% endblock %}
 
 {% block content %}
-<div class="container mt-5" style="max-width:520px">
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h3 class="card-title mb-4">회원가입</h3>
-      <form method="post" novalidate>
-        {% csrf_token %}
-        {% if form.errors %}
-          <div class="alert alert-danger">양식을 확인하세요.</div>
+<div class="auth-card">
+    <div class="auth-tabs">
+        <a href="{% url 'account:login' %}" class="auth-tabs__item">로그인</a>
+        <a href="{% url 'account:signup' %}" class="auth-tabs__item active">회원가입</a>
+    </div>
+
+    <div class="auth-body">
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
         {% endif %}
 
-        <div class="mb-3">
-          <label class="form-label">아이디</label>
-          {{ form.username }}
-        </div>
-        <div class="mb-3">
-          <label class="form-label">이메일</label>
-          {{ form.email }}
-        </div>
-        <div class="mb-3">
-          <label class="form-label">비밀번호</label>
-          {{ form.password1 }}
-        </div>
-        <div class="mb-3">
-          <label class="form-label">비밀번호 확인</label>
-          {{ form.password2 }}
-        </div>
+        <form method="post" novalidate>
+            {% csrf_token %}
 
-        <button class="btn btn-primary w-100">회원가입</button>
-      </form>
-      <hr>
-      <p class="text-center mb-0">이미 계정이 있으신가요? <a href="{% url 'account:login' %}">로그인</a></p>
+            <div class="form-field">
+                <label for="{{ form.username.id_for_label }}">아이디</label>
+                {{ form.username }}
+                {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors|join:", " }}</div>{% endif %}
+            </div>
+
+            <div class="form-field">
+                <label for="{{ form.email.id_for_label }}">이메일</label>
+                {{ form.email }}
+                {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors|join:", " }}</div>{% endif %}
+            </div>
+
+            <div class="form-field">
+                <label for="{{ form.password1.id_for_label }}">비밀번호</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}<div class="text-danger small mt-1">{{ form.password1.errors|join:", " }}</div>{% endif %}
+            </div>
+
+            <div class="form-field">
+                <label for="{{ form.password2.id_for_label }}">비밀번호 확인</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}<div class="text-danger small mt-1">{{ form.password2.errors|join:", " }}</div>{% endif %}
+            </div>
+
+            <div class="form-field">
+                <label for="{{ form.enlist_date.id_for_label }}">입대일</label>
+                {{ form.enlist_date }}
+                {% if form.enlist_date.errors %}<div class="text-danger small mt-1">{{ form.enlist_date.errors|join:", " }}</div>{% endif %}
+            </div>
+
+            <div class="form-field">
+                <label>신분</label>
+                <div class="identity-select" id="identity-select">
+                    {% for value, text in form.fields.status.choices %}
+                    <label class="identity-option" data-identity="{{ value }}">
+                        <input type="radio" name="status" value="{{ value }}"
+                               {% if form.status.value == value %}checked{% endif %}>
+                        <span class="identity-option__icon">
+                            <i class="bi {% if value == '병사' %}bi-shield-fill{% else %}bi-award{% endif %}"></i>
+                        </span>
+                        <span class="identity-option__label">{{ text }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mascot-tip" id="mascot-tip">
+                <b>박병장</b> &mdash; <span id="mascot-tip-text">"야, 형이 다 알려줄게!"</span>
+            </div>
+
+            <div class="form-field" id="rank-field">
+                <label>계급</label>
+                <div class="rank-select">
+                    {% for value, text in form.fields.rank.choices %}
+                    <label class="rank-option">
+                        <input type="radio" name="rank" value="{{ value }}"
+                               {% if form.rank.value == value %}checked{% endif %}>
+                        {{ text }}
+                    </label>
+                    {% endfor %}
+                </div>
+                {% if form.rank.errors %}<div class="text-danger small mt-1">{{ form.rank.errors|join:", " }}</div>{% endif %}
+            </div>
+
+            <div class="form-field" id="officer-rank-field" style="display:none;">
+                <label>계급</label>
+                {% for group_name, group_choices in form.fields.officer_rank.choices %}
+                <div class="rank-group">
+                    <div class="rank-group__label">{{ group_name }}</div>
+                    <div class="rank-select">
+                        {% for value, text in group_choices %}
+                        <label class="rank-option rank-option--officer">
+                            <input type="radio" name="officer_rank" value="{{ value }}"
+                                   {% if form.officer_rank.value == value %}checked{% endif %}>
+                            {{ text }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                {% if form.officer_rank.errors %}<div class="text-danger small mt-1">{{ form.officer_rank.errors|join:", " }}</div>{% endif %}
+            </div>
+
+            <button type="submit" class="btn-block mt-2">가입 완료</button>
+        </form>
     </div>
-  </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var identityOptions = document.querySelectorAll('#identity-select .identity-option');
+    var rankField = document.getElementById('rank-field');
+    var officerRankField = document.getElementById('officer-rank-field');
+    var mascotTipText = document.getElementById('mascot-tip-text');
+    var mascotTip = document.getElementById('mascot-tip'); // 마스코트 팁 박스 요소 추가
+
+    // 병사에게는 편하게 반말로, 간부에게는 예의를 갖춰 존댓말로 안내합니다.
+    var MASCOT_TIPS = {
+        '병사': '"야, 형이 다 알려줄게!"',
+        '간부': '"답변드리겠습니다."'
+    };
+
+    function toggleRankField(status) {
+        var isEnlisted = status === '병사';
+        rankField.style.display = isEnlisted ? 'block' : 'none';
+        officerRankField.style.display = isEnlisted ? 'none' : 'block';
+        if (mascotTipText && MASCOT_TIPS[status]) {
+            mascotTipText.textContent = MASCOT_TIPS[status];
+        }
+
+        // 간부 선택 시 .mascot-tip--officer 클래스 추가 (배경색 및 박병장 글자색 변경)
+        if (mascotTip) {
+            mascotTip.classList.toggle('mascot-tip--officer', !isEnlisted);
+        }
+    }
+
+    identityOptions.forEach(function (option) {
+        option.addEventListener('click', function () {
+            toggleRankField(option.dataset.identity);
+        });
+    });
+
+    var checked = document.querySelector('#identity-select input[type=radio]:checked');
+    toggleRankField(checked ? checked.value : '병사');
+});
+</script>
 {% endblock %}
