@@ -23,6 +23,9 @@ class JournalEntry(models.Model): # 캘린더
     content = models.TextField(blank=True) # 일지 내용(메모)
     entry_date = models.DateField() # 일지 작성 날짜
 
+    class Meta:
+        unique_together = ("user", "entry_date") # 하루에 하나의 기록만 작성(같은 날짜 재저장 시 덮어쓰기)
+
     def __str__(self):
         return f"{self.user} - {self.entry_date} ({self.entry_type})"
 
@@ -44,3 +47,11 @@ class Bookmark(models.Model):
 
     def __str__(self):
         return f"Bookmark by {self.user} - {self.message}"
+
+class ServiceInfo(models.Model): # D-day 탭의 입대/전역 정보
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="service_info")
+    enlist_date = models.DateField() # 입대일
+    discharge_date = models.DateField() # 전역 예정일
+
+    def __str__(self):
+        return f"{self.user} 복무기간 ({self.enlist_date} ~ {self.discharge_date})"

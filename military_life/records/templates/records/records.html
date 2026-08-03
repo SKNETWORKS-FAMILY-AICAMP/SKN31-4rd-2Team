@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}개인 기록 - 진격의 박병장{% endblock %}
+{% block nav_records_active %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'records/css/records.css' %}?v=7">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 records-page">
+
+    <div class="records-header">
+        <div>
+            <h2>📖 개인 기록</h2>
+            <p class="records-subtitle">나만의 군 생활 기록을 관리하세요</p>
+        </div>
+        {% if request.user.profile.status %}
+        <span class="badge-rank">{{ request.user.profile.status }}</span>
+        {% endif %}
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert-message">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- 탭 메뉴 -->
+    <div class="records-tabs">
+        <button type="button" class="tab-btn {% if active_tab == 'dday' %}active{% endif %}" data-tab="dday">D-day</button>
+        <button type="button" class="tab-btn {% if active_tab == 'calendar' %}active{% endif %}" data-tab="calendar">캘린더</button>
+        <button type="button" class="tab-btn {% if active_tab == 'goals' %}active{% endif %}" data-tab="goals">목표</button>
+    </div>
+
+    <!-- D-day 탭 -->
+    <div class="records-tab-panel" id="panel-dday" {% if active_tab != 'dday' %}hidden{% endif %}>
+        {% if service_info %}
+        <div class="dday-card">
+            <span class="dday-watermark">전역</span>
+            <p class="dday-label">전역까지 남은 날</p>
+            <h1 class="dday-number">D-{{ remaining_days }}</h1>
+            <p class="dday-date">{{ service_info.discharge_date|date:"Y년 n월 j일" }} 전역 예정</p>
+            <div class="dday-progress-bar">
+                <div class="dday-progress-fill" style="width: {{ progress_percent }}%;"></div>
+            </div>
+            <div class="dday-progress-labels">
+                <span>입대 ({{ service_info.enlist_date|date:"Y.m.d" }})</span>
+                <span class="dday-percent">{{ progress_percent }}%</span>
+                <span>전역 ({{ service_info.discharge_date|date:"Y.m.d" }})</span>
+            </div>
+        </div>
+        <div class="dday-stats">
+            <div class="dday-stat-card">
+                <p class="stat-label">복무한 날</p>
+                <p class="stat-value">{{ served_days }}<span class="stat-unit">일</span></p>
+            </div>
+            <div class="dday-stat-card">
+                <p class="stat-label">총 복무 일수</p>
+                <p class="stat-value">{{ total_days }}<span class="stat-unit">일</span></p>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>아직 입대일/전역일 정보가 등록되지 않았습니다.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 캘린더 탭 -->
+    <div class="records-tab-panel" id="panel-calendar" {% if active_tab != 'calendar' %}hidden{% endif %}>
+        {% if overnight_count %}
+        <span class="calendar-badge">● 외박 {{ overnight_count }}회</span>
+        {% endif %}
+
+        <div class="calendar-card">
+            <div class="calendar-nav">
+                <a href="?tab=calendar&year={{ prev_year }}&month={{ prev_month }}" class="calendar-nav-btn">‹</a>
+                <h3>{{ year }}년 {{ month }}월</h3>
+                <a href="?tab=calendar&year={{ next_year }}&month={{ next_month }}" class="calendar-nav-btn">›</a>
+            </div>
+
+            <table class="calendar-table">
+                <thead>
+                    <tr>
+                        <th class="sunday">일</th>
+                        <th>월</th>
+                        <th>화</th>
+                        <th>수</th>
+                        <th>목</th>
+                        <th>금</th>
+                        <th class="saturday">토</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for week in weeks %}
+                    <tr>
+                        {% for day in week %}
+                        {% if day %}
+                        <td class="calendar-day {% if day.is_today %}today{% endif %}"
+                            data-day="{{ day.day }}"
+                            data-year="{{ year }}"
+                            data-month="{{ month }}"
+                            data-type="{{ day.entry_type|default:'일반' }}"
+                            data-mood="{{ day.mood|default:'행복' }}"
+                            data-content="{{ day.content }}">
+                            <span class="day-number">{{ day.day }}</span>
+                            {% if day.entry_type %}
+                            <span class="day-tag tag-{{ day.entry_type }}">{{ day.entry_emoji }} {{ day.entry_type }}</span>
+                            {% endif %}
+                            {% if day.goal_category %}
+                            <span class="day-tag tag-goal">📚 {{ day.goal_category }}</span>
+                            {% endif %}
+                        </td>
+                        {% else %}
+                        <td class="empty-day"></td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="calendar-footer">
+                <p class="calendar-hint">날짜를 탭하면 일정을 기록할 수 있습니다</p>
+                <div class="calendar-legend">
+                    <span class="legend-item legend-휴가">휴가</span>
+                    <span class="legend-item legend-외박">외박</span>
+                    <span class="legend-item legend-외출">외출</span>
+                    <span class="legend-item legend-일반">일반</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 목표 탭 -->
+    <div class="records-tab-panel" id="panel-goals" {% if active_tab != 'goals' %}hidden{% endif %}>
+        <button type="button" id="add-goal-btn" class="add-goal-btn">＋ 새 목표 추가</button>
+
+        <form method="post" id="goal-form" class="goal-form" hidden>
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="goal">
+            <div class="form-row">
+                <label for="{{ goal_form.category.id_for_label }}">카테고리</label>
+                {{ goal_form.category }}
+            </div>
+            <div class="form-row">
+                <label for="{{ goal_form.title.id_for_label }}">목표명</label>
+                {{ goal_form.title }}
+            </div>
+            <div class="form-row">
+                <label for="{{ goal_form.target_date.id_for_label }}">목표일</label>
+                {{ goal_form.target_date }}
+            </div>
+            <div class="form-actions">
+                <button type="button" id="cancel-goal-btn" class="btn-secondary">취소</button>
+                <button type="submit" class="btn-primary">저장</button>
+            </div>
+        </form>
+
+        {% for goal in goals %}
+        <div class="goal-card {% if goal.is_done %}goal-done{% endif %}">
+            {% if goal.category %}<span class="goal-category">{{ goal.category }}</span>{% endif %}
+            <div class="goal-percent">{{ goal.progress }}%<span class="goal-percent-label">달성</span></div>
+            <p class="goal-title">{{ goal.title }}</p>
+            <div class="goal-progress-bar">
+                <div class="goal-progress-fill" style="width: {{ goal.progress }}%;"></div>
+            </div>
+            <p class="goal-date">📅 목표일: {{ goal.target_date|date:"Y-m-d" }}</p>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <p>아직 등록된 목표가 없습니다.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 일정 기록 모달 -->
+<div id="journal-modal" class="modal-overlay" hidden>
+    <div class="modal-box">
+        <div class="modal-header">
+            <div>
+                <p id="modal-date" class="modal-date"></p>
+                <h3>일정 기록</h3>
+            </div>
+            <button type="button" id="modal-close-btn" class="modal-close" aria-label="닫기">&times;</button>
+        </div>
+        <form method="post" id="journal-form">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="journal">
+            <input type="hidden" name="entry_date" id="entry-date-input">
+            <input type="hidden" name="entry_type" id="entry-type-input" value="일반">
+            <input type="hidden" name="mood" id="mood-input" value="행복">
+
+            <p class="form-label">일정 유형</p>
+            <div class="type-select">
+                <button type="button" class="type-btn active" data-value="일반">✏️ 일반</button>
+                <button type="button" class="type-btn" data-value="휴가">🏖️ 휴가</button>
+                <button type="button" class="type-btn" data-value="외박">🏠 외박</button>
+                <button type="button" class="type-btn" data-value="외출">🚶 외출</button>
+            </div>
+
+            <p class="form-label">오늘의 기분</p>
+            <div class="mood-select">
+                <button type="button" class="mood-btn active" data-value="행복">😊</button>
+                <button type="button" class="mood-btn" data-value="보통">😐</button>
+                <button type="button" class="mood-btn" data-value="지침">😔</button>
+                <button type="button" class="mood-btn" data-value="운동">💪</button>
+                <button type="button" class="mood-btn" data-value="학습">📚</button>
+                <button type="button" class="mood-btn" data-value="졸림">😴</button>
+            </div>
+
+            <p class="form-label">메모</p>
+            <textarea name="content" id="content-input" placeholder="오늘 하루를 기록해 보세요..."></textarea>
+
+            <div class="modal-actions">
+                <button type="button" id="modal-cancel-btn" class="btn-secondary">취소</button>
+                <button type="submit" class="btn-primary">저장</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'records/js/records.js' %}?v=7"></script>
+{% endblock %}

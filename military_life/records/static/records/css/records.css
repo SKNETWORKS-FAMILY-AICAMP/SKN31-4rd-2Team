@@ -1,0 +1,616 @@
+.records-page {
+    --rg-dark: #1f2f1a;
+    --rg-dark2: #2c4322;
+    --rg-primary: #085041;
+    --rg-accent: #8bc34a;
+    --rg-border: #e6e2d3;
+    --rg-muted: #8a8a7a;
+    color: #2b2b23;
+}
+
+/* 헤더 */
+.records-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+}
+
+.records-header h2 {
+    margin: 0 0 .25rem;
+    font-size: 1.6rem;
+}
+
+.records-subtitle {
+    color: var(--rg-muted);
+    margin: 0;
+}
+
+.badge-rank {
+    background: var(--rg-primary);
+    color: #fff;
+    padding: .4rem 1rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: .9rem;
+}
+
+.alert-message {
+    background: #eaf4e6;
+    border: 1px solid #bcd9ac;
+    color: #355e2c;
+    padding: .6rem 1rem;
+    border-radius: .5rem;
+    margin-bottom: 1rem;
+}
+
+/* 탭 메뉴 */
+.records-tabs {
+    display: flex;
+    background: #ece7d8;
+    border-radius: .8rem;
+    padding: .3rem;
+    margin-bottom: 1.5rem;
+    gap: .25rem;
+}
+
+.tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: .65rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6b6b5c;
+    border-radius: .6rem;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+}
+
+.tab-btn.active {
+    background: #fff;
+    color: var(--rg-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+}
+
+.records-tab-panel[hidden] {
+    display: none;
+}
+
+/* D-day 카드 */
+.dday-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, var(--rg-dark2), var(--rg-dark));
+    color: #e9e6d8;
+    border-radius: 1rem;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.dday-watermark {
+    position: absolute;
+    top: 8%;
+    right: 4%;
+    font-size: 5rem;
+    font-weight: 800;
+    color: rgba(255, 255, 255, .07);
+    letter-spacing: .3rem;
+    pointer-events: none;
+}
+
+.dday-label {
+    margin: 0 0 .5rem;
+    color: #b9c9a9;
+}
+
+.dday-number {
+    font-size: 3.5rem;
+    margin: 0;
+    font-weight: 800;
+}
+
+.dday-date {
+    color: #cfd8bd;
+    margin: .5rem 0 1.5rem;
+}
+
+.dday-progress-bar {
+    background: rgba(255, 255, 255, .15);
+    border-radius: 999px;
+    height: 10px;
+    overflow: hidden;
+}
+
+.dday-progress-fill {
+    height: 100%;
+    background: var(--rg-accent);
+    border-radius: 999px;
+}
+
+.dday-progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: .75rem;
+    font-size: .85rem;
+    color: #c7d1b6;
+}
+
+.dday-percent {
+    color: var(--rg-accent);
+    font-weight: 700;
+}
+
+.dday-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.dday-stat-card {
+    background: #fff;
+    border: 1px solid var(--rg-border);
+    border-radius: .8rem;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.stat-label {
+    margin: 0 0 .4rem;
+    color: var(--rg-muted);
+}
+
+.stat-value {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #4a3520;
+}
+
+.stat-unit {
+    font-size: 1rem;
+    font-weight: 400;
+    margin-left: .2rem;
+}
+
+/* 캘린더 */
+.calendar-badge {
+    display: inline-block;
+    border: 1px solid #e7c877;
+    background: #fdf6e3;
+    color: #b8842e;
+    padding: .35rem .9rem;
+    border-radius: 999px;
+    font-size: .85rem;
+    margin-bottom: 1rem;
+}
+
+.calendar-card {
+    background: #fff;
+    border: 1px solid var(--rg-border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+}
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.calendar-nav h3 {
+    margin: 0;
+    min-width: 8rem;
+    text-align: center;
+}
+
+.calendar-nav-btn {
+    text-decoration: none;
+    color: var(--rg-primary);
+    font-size: 1.3rem;
+    padding: .2rem .6rem;
+}
+
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.calendar-table th {
+    padding: .5rem 0;
+    color: var(--rg-muted);
+    font-weight: 600;
+}
+
+.calendar-table th.sunday {
+    color: #c9483f;
+}
+
+.calendar-table th.saturday {
+    color: #3d6fc9;
+}
+
+.calendar-table td {
+    border-top: 1px solid var(--rg-border);
+    height: 5.5rem;
+    vertical-align: top;
+    padding: .4rem;
+}
+
+.calendar-table td.calendar-day {
+    cursor: pointer;
+    transition: background .1s ease;
+}
+
+.calendar-table td.calendar-day:hover {
+    background: #f7f6ee;
+}
+
+.calendar-day.today {
+    background: #eef3e7;
+}
+
+.calendar-day.today .day-number {
+    background: var(--rg-primary);
+    color: #fff;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+}
+
+.day-number {
+    font-weight: 600;
+    display: inline-block;
+}
+
+.day-tag {
+    display: block;
+    margin-top: .3rem;
+    font-size: .7rem;
+    padding: .1rem .4rem;
+    border-radius: .4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tag-일반 {
+    background: #eee;
+    color: #555;
+}
+
+.tag-휴가 {
+    background: #e4ecfb;
+    color: #3d6fc9;
+}
+
+.tag-외박 {
+    background: #fdf1d9;
+    color: #b8842e;
+}
+
+.tag-외출 {
+    background: #efe6da;
+    color: #7a5a34;
+}
+
+.tag-goal {
+    background: #e8f0e0;
+    color: #4a7c3f;
+}
+
+.calendar-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-top: 1.25rem;
+}
+
+.calendar-hint {
+    color: var(--rg-muted);
+    font-size: .85rem;
+    margin: 0;
+}
+
+.calendar-legend {
+    display: flex;
+    gap: 1rem;
+    font-size: .85rem;
+    font-weight: 600;
+}
+
+.legend-휴가 {
+    color: #3d6fc9;
+}
+
+.legend-외박 {
+    color: #b8842e;
+}
+
+.legend-외출 {
+    color: #7a5a34;
+}
+
+.legend-일반 {
+    color: #555;
+}
+
+/* 목표 */
+.add-goal-btn {
+    width: 100%;
+    border: 1.5px dashed #cbc6b3;
+    background: transparent;
+    color: var(--rg-muted);
+    padding: 1rem;
+    border-radius: .8rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.add-goal-btn:hover {
+    background: #f7f6ee;
+}
+
+.goal-form {
+    background: #fff;
+    border: 1px solid var(--rg-border);
+    border-radius: .8rem;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.form-row {
+    margin-bottom: .9rem;
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+}
+
+.form-row label {
+    font-weight: 600;
+    font-size: .9rem;
+}
+
+.form-row input {
+    border: 1px solid var(--rg-border);
+    border-radius: .5rem;
+    padding: .55rem .7rem;
+    font-size: .95rem;
+}
+
+.form-actions,
+.modal-actions {
+    display: flex;
+    gap: .75rem;
+    margin-top: 1rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    flex: 1;
+    padding: .7rem;
+    border-radius: .6rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
+    background: var(--rg-primary);
+    color: #fff;
+}
+
+.btn-secondary {
+    background: #f1efe6;
+    color: #4a4a3d;
+}
+
+.goal-card {
+    background: #fff;
+    border: 1px solid var(--rg-border);
+    border-radius: .8rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.goal-card.goal-done {
+    opacity: .6;
+}
+
+.goal-category {
+    display: inline-block;
+    background: #e8f0e0;
+    color: #4a7c3f;
+    font-size: .8rem;
+    font-weight: 600;
+    padding: .2rem .7rem;
+    border-radius: 999px;
+    margin-bottom: .6rem;
+}
+
+.goal-percent {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    text-align: right;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--rg-primary);
+}
+
+.goal-percent-label {
+    display: block;
+    font-size: .75rem;
+    font-weight: 400;
+    color: var(--rg-muted);
+}
+
+.goal-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 .75rem;
+    padding-right: 5rem;
+}
+
+.goal-progress-bar {
+    background: #ece9dd;
+    border-radius: 999px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: .6rem;
+}
+
+.goal-progress-fill {
+    height: 100%;
+    background: var(--rg-primary);
+    border-radius: 999px;
+}
+
+.goal-date {
+    margin: 0;
+    font-size: .85rem;
+    color: var(--rg-muted);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--rg-muted);
+}
+
+/* 일정 기록 모달 */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.modal-overlay[hidden] {
+    display: none;
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 1rem;
+    max-width: 480px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    background: linear-gradient(160deg, var(--rg-dark2), var(--rg-dark));
+    color: #fff;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-radius: 1rem 1rem 0 0;
+}
+
+.modal-date {
+    margin: 0 0 .25rem;
+    color: #cfd8bd;
+    font-size: .85rem;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+#journal-form {
+    padding: 1.5rem;
+}
+
+.form-label {
+    font-weight: 700;
+    margin: 1rem 0 .6rem;
+}
+
+.form-label:first-of-type {
+    margin-top: 0;
+}
+
+.type-select,
+.mood-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.type-btn,
+.mood-btn {
+    border: 1px solid var(--rg-border);
+    background: #fff;
+    border-radius: .6rem;
+    padding: .55rem .9rem;
+    cursor: pointer;
+    font-size: .95rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.mood-btn {
+    font-size: 1.3rem;
+    padding: .5rem .7rem;
+}
+
+.type-btn.active,
+.mood-btn.active {
+    border-color: var(--rg-primary);
+    background: #eef3e7;
+    color: var(--rg-primary);
+}
+
+#content-input {
+    width: 100%;
+    min-height: 7rem;
+    border: 1px solid var(--rg-border);
+    border-radius: .6rem;
+    padding: .7rem;
+    font-size: .95rem;
+    resize: vertical;
+    font-family: inherit;
+}
+
+@media (max-width: 576px) {
+    .dday-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .calendar-table td {
+        height: 4rem;
+        font-size: .8rem;
+    }
+
+    .day-tag {
+        display: none;
+    }
+}

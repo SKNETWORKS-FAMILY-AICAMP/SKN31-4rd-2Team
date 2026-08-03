@@ -17,7 +17,7 @@
             <p class="text-muted mb-0 small">같은 상황의 동료들과 정보를 공유해요</p>
         </div>
         <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
-            <i class="fa-solid fa-plus"></i> 글쓰기
+            <i class="bi bi-plus-lg"></i> 글쓰기
         </button>
     </div>
 
@@ -29,7 +29,7 @@
             {% endif %}
             <div class="input-group shadow-sm" style="border-radius: var(--radius-md); overflow: hidden;">
                 <span class="input-group-text border-end-0 text-muted border-0" style="background: var(--color-bg);">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <i class="bi bi-search"></i>
                 </span>
                 <input type="text" class="form-control border-start-0 border-0"
                     style="background: var(--color-bg); box-shadow: none;" name="q" placeholder="게시물 검색..."
@@ -71,12 +71,12 @@
 
                     <div class="d-flex justify-content-between align-items-center border-top pt-3">
                         <div class="d-flex gap-3 text-muted small">
-                            <span><i class="fa-regular fa-thumbs-up"></i> {{ post.like_count }}</span>
-                            <span><i class="fa-regular fa-eye"></i> {{ post.view_count }}</span>
-                            <span><i class="fa-regular fa-comment"></i> {{ post.comment_count }}</span>
+                            <span><i class="bi bi-hand-thumbs-up"></i> {{ post.like_count }}</span>
+                            <span><i class="bi bi-eye"></i> {{ post.view_count }}</span>
+                            <span><i class="bi bi-chat"></i> {{ post.comment_count }}</span>
                         </div>
                         <div class="text-muted small">
-                            <i class="fa-solid fa-lock"></i> 익명
+                            <i class="bi bi-lock-fill"></i> 익명
                         </div>
                     </div>
                 </div>
@@ -124,7 +124,7 @@
                     </div>
                     <div class="alert alert-warning d-flex align-items-center py-2" role="alert"
                         style="background: #fcf8e3; border: none; color: #8a6d3b;">
-                        <i class="fa-solid fa-lock me-2"></i>
+                        <i class="bi bi-lock-fill me-2"></i>
                         <small>작성자 정보는 완전히 익명으로 처리됩니다.</small>
                     </div>
                     <div class="d-flex justify-content-end gap-2 mt-4">
