@@ -9,475 +9,825 @@
 <link rel="stylesheet" href="{% static 'chatbot/css/chatbot.css' %}">
 {% endblock %}
 
+
 {% block content %}
 <div class="chat-layout">
 
+  <!-- =====================================================
+       왼쪽 대화 목록
+  ====================================================== -->
   <aside class="chat-sidebar">
-    <button id="new-chat-btn" type="button">+ 새 대화</button>
-    <ul id="conversation-list">
-      {% for conv in conversations %}
-      <li class="conversation-item" data-id="{{ conv.id }}">{{ conv.title|default:"새 대화" }}</li>
-      {% endfor %}
-    </ul>
-  </aside>
 
-  <div class="chat-page">
+    <!-- 사용자 정보 -->
+    <div class="sidebar-profile">
+      <div class="sidebar-profile__top">
+        <span class="rank-badge">상병</span>
 
-    <div class="chat-title-wrap">
-      <h2 class="chat-title">박병장 상담소</h2>
+        <div class="sidebar-profile__info">
+          <strong class="sidebar-username">
+            {{ request.user.username|default:"sehee" }}
+          </strong>
+
+          <div class="sidebar-stars" aria-label="평점 3점">
+            ★★★
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="profile-toggle"
+          aria-label="사용자 메뉴"
+        >
+         ⌄
+        </button>
+      </div>
     </div>
 
-    <div id="messages"></div>
-
-    <form id="form">
-      <input
-        id="input"
-        type="text"
-        placeholder="질문을 입력하세요"
-        autocomplete="off"
-      />
+    <!-- 탭 -->
+    <div class="sidebar-tabs">
+      <button
+        type="button"
+        class="sidebar-tab active"
+      >
+        최근
+      </button>
 
       <button
-        id="submit-button"
-        type="submit"
+        type="button"
+        class="sidebar-tab"
       >
-        전송
+        저장
       </button>
-    </form>
 
-  </div>
+      <button
+        type="button"
+        class="sidebar-tab"
+      >
+        카테고리
+      </button>
+    </div>
 
+    <!-- 새 대화 -->
+    <button id="new-chat-btn" type="button">
+      <span class="new-chat-icon">＋</span>
+      <span>새 대화</span>
+    </button>
+
+    <!-- 최근 대화 제목 -->
+    <div class="conversation-section-title">
+      최근 대화
+    </div>
+
+    <!-- 대화 목록 -->
+    <ul id="conversation-list">
+      {% for conv in conversations %}
+      <li
+        class="conversation-item"
+        data-id="{{ conv.id }}"
+      >
+        <div class="conversation-item__top">
+          <strong class="conversation-title">
+            {{ conv.title|default:"새 대화" }}
+          </strong>
+
+          <span class="conversation-date">
+            {% if forloop.first %}
+              오늘
+            {% else %}
+              최근
+            {% endif %}
+          </span>
+        </div>
+
+        <p class="conversation-preview">
+          대화 내용을 확인하려면 클릭하세요.
+        </p>
+      </li>
+      {% empty %}
+      <li class="conversation-empty">
+        아직 저장된 대화가 없습니다.
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="sidebar-bottom">
+      <span>쿠키 관리 또는 로그아웃</span>
+    </div>
+  </aside>
+
+
+  <!-- =====================================================
+       오른쪽 채팅 화면
+  ====================================================== -->
+  <main class="chat-main">
+
+    <!-- 상단 챗봇 정보 -->
+    <header class="chat-main-header">
+      <div class="chat-main-header__left">
+
+        <button
+          type="button"
+          class="sidebar-menu-button"
+          aria-label="메뉴"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <img
+          class="header-bot-profile"
+          src="{% static 'images/bot_profile.png' %}"
+          alt="박병장 프로필"
+        >
+
+        <div class="header-bot-info">
+          <strong>박병장</strong>
+          <span>군 법규 및 병영생활 AI 상담</span>
+        </div>
+      </div>
+
+      <div class="online-badge">
+        <span class="online-dot"></span>
+        온라인
+      </div>
+    </header>
+
+
+    <!-- 메시지 영역 -->
+    <section
+      id="messages"
+      class="chat-messages"
+      aria-live="polite"
+    ></section>
+
+
+    <!-- 하단 입력 영역 -->
+    <footer class="chat-footer">
+
+      <form id="form" class="chat-input-form">
+        <input
+          id="input"
+          type="text"
+          placeholder="편하게 물어봐..."
+          autocomplete="off"
+          aria-label="질문 입력"
+        >
+
+        <button
+          id="submit-button"
+          type="submit"
+          aria-label="메시지 전송"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M21 3L10.5 13.5M21 3L14.5 21L10.5 13.5M21 3L3 9.5L10.5 13.5"
+            />
+          </svg>
+        </button>
+      </form>
+
+      <p class="chat-notice">
+        AI 답변은 참고용입니다. 중요한 사안은 법무관에게 확인하세요.
+      </p>
+    </footer>
+
+  </main>
 </div>
 {% endblock %}
 
 
 {% block extra_js %}
 <script>
-const NEW_STREAM_URL =
-  "{% url 'chatbot:chat-stream-new' %}";
+  /* =====================================================
+     Django URL 및 정적 파일
+  ====================================================== */
 
-const STREAM_URL_TEMPLATE =
-  "{% url 'chatbot:chat-stream' conversation_id='00000000-0000-0000-0000-000000000000' %}";
+  const NEW_STREAM_URL =
+    "{% url 'chatbot:chat-stream-new' %}";
 
-const CONVERSATION_LIST_URL =
-  "{% url 'chatbot:conversation-list' %}";
+  const STREAM_URL_TEMPLATE =
+    "{% url 'chatbot:chat-stream' conversation_id='00000000-0000-0000-0000-000000000000' %}";
 
-const CONVERSATION_MESSAGES_TEMPLATE =
-  "{% url 'chatbot:conversation-messages' conversation_id='00000000-0000-0000-0000-000000000000' %}";
+  const CONVERSATION_LIST_URL =
+    "{% url 'chatbot:conversation-list' %}";
 
-const DUMMY_UUID =
-  "00000000-0000-0000-0000-000000000000";
+  const CONVERSATION_MESSAGES_TEMPLATE =
+    "{% url 'chatbot:conversation-messages' conversation_id='00000000-0000-0000-0000-000000000000' %}";
 
-const BOT_PROFILE_IMAGE =
-  "{% static 'images/bot_profile.png' %}";
+  const DUMMY_UUID =
+    "00000000-0000-0000-0000-000000000000";
 
-let conversationId = null;
-
-const messagesEl =
-  document.getElementById("messages");
-
-const formEl =
-  document.getElementById("form");
-
-const inputEl =
-  document.getElementById("input");
-
-const submitButtonEl =
-  document.getElementById("submit-button");
-
-const conversationListEl =
-  document.getElementById("conversation-list");
-
-const newChatBtn =
-  document.getElementById("new-chat-btn");
+  const BOT_PROFILE_IMAGE =
+    "{% static 'images/bot_profile.png' %}";
 
 
-function addHumanBubble(text) {
-  const row = document.createElement("div");
-  row.className =
-    "message-row message-row--human";
+  /* =====================================================
+     기본 변수
+  ====================================================== */
 
-  const bubble =
-    document.createElement("div");
+  let conversationId = null;
 
-  bubble.className =
-    "bubble human";
+  const messagesEl =
+    document.getElementById("messages");
 
-  bubble.textContent = text;
+  const formEl =
+    document.getElementById("form");
 
-  row.appendChild(bubble);
-  messagesEl.appendChild(row);
+  const inputEl =
+    document.getElementById("input");
 
-  scrollToLatestMessage();
+  const submitButtonEl =
+    document.getElementById("submit-button");
 
-  return bubble;
-}
+  const conversationListEl =
+    document.getElementById("conversation-list");
 
-
-function addAiBubble(text = "") {
-  const row = document.createElement("div");
-  row.className =
-    "message-row message-row--ai";
-
-  const profileImage =
-    document.createElement("img");
-
-  profileImage.className =
-    "bot-profile";
-
-  profileImage.src =
-    BOT_PROFILE_IMAGE;
-
-  profileImage.alt =
-    "박병장 프로필";
-
-  profileImage.addEventListener(
-    "error",
-    () => {
-      profileImage.style.display = "none";
-    }
-  );
-
-  const content =
-    document.createElement("div");
-
-  content.className =
-    "ai-content";
-
-  const botName =
-    document.createElement("div");
-
-  botName.className =
-    "bot-name";
-
-  botName.textContent =
-    "박병장";
-
-  const bubble =
-    document.createElement("div");
-
-  bubble.className =
-    "bubble ai";
-
-  bubble.textContent = text;
-
-  content.appendChild(botName);
-  content.appendChild(bubble);
-
-  row.appendChild(profileImage);
-  row.appendChild(content);
-
-  messagesEl.appendChild(row);
-
-  scrollToLatestMessage();
-
-  return bubble;
-}
+  const newChatBtn =
+    document.getElementById("new-chat-btn");
 
 
-function addStatus(text) {
-  const div =
-    document.createElement("div");
+  /* =====================================================
+     시간 표시
+  ====================================================== */
 
-  div.className =
-    "status";
+  function getCurrentTimeText() {
+    const now = new Date();
 
-  div.textContent = text;
+    const hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, "0");
 
-  messagesEl.appendChild(div);
+    const period = hours < 12 ? "오전" : "오후";
+    const displayHour = hours % 12 || 12;
 
-  scrollToLatestMessage();
-
-  return div;
-}
-
-
-function scrollToLatestMessage() {
-  messagesEl.scrollTop =
-    messagesEl.scrollHeight;
-}
+    return `${period} ${displayHour}:${minutes}`;
+  }
 
 
-function setActiveConversation(id) {
-  conversationId = id;
+  /* =====================================================
+     봇 프로필 이미지 만들기
+  ====================================================== */
 
-  document
-    .querySelectorAll(".conversation-item")
-    .forEach((el) => {
-      el.classList.toggle(
-        "active",
-        el.dataset.id === id
-      );
+  function createBotProfileImage(className = "bot-profile") {
+    const profileImage = document.createElement("img");
+
+    profileImage.className = className;
+    profileImage.src = BOT_PROFILE_IMAGE;
+    profileImage.alt = "박병장 프로필";
+
+    profileImage.addEventListener("error", () => {
+      profileImage.classList.add("image-error");
+      profileImage.removeAttribute("src");
+      profileImage.alt = "박병장";
     });
-}
 
-
-function renderConversationList(conversations) {
-  conversationListEl.innerHTML = "";
-
-  for (const conv of conversations) {
-    const li = document.createElement("li");
-    li.className =
-      "conversation-item" +
-      (conv.id === conversationId ? " active" : "");
-    li.dataset.id = conv.id;
-    li.textContent = conv.title || "새 대화";
-    conversationListEl.appendChild(li);
+    return profileImage;
   }
-}
 
 
-async function refreshSidebar() {
-  const res = await fetch(CONVERSATION_LIST_URL);
-  if (!res.ok) return;
+  /* =====================================================
+     최초 인사 메시지
+  ====================================================== */
 
-  const data = await res.json();
-  renderConversationList(data.conversations);
-}
+  function renderWelcomeMessage() {
+    messagesEl.innerHTML = "";
+
+    addAiBubble(
+      "안녕! 나는 군 법규랑 병영생활 관련해서 도와주는 박병장이야. 휴가, 징계, 급여, 전역 같은 거 뭐든 편하게 물어봐. 형이 다 알려줄게!",
+      getCurrentTimeText()
+    );
+  }
 
 
-async function loadConversation(id) {
-  const res = await fetch(
-    CONVERSATION_MESSAGES_TEMPLATE.replace(DUMMY_UUID, id)
-  );
-  if (!res.ok) return;
+  /* =====================================================
+     사용자 메시지
+  ====================================================== */
 
-  const data = await res.json();
+  function addHumanBubble(text, timeText = getCurrentTimeText()) {
+    const row = document.createElement("div");
+    row.className = "message-row message-row--human";
 
-  messagesEl.innerHTML = "";
-  for (const m of data.messages) {
-    if (m.role === "human") {
-      addHumanBubble(m.content);
-    } else {
-      addAiBubble(m.content);
+    const content = document.createElement("div");
+    content.className = "human-content";
+
+    const meta = document.createElement("div");
+    meta.className = "message-meta message-meta--human";
+    meta.textContent = `나 · ${timeText}`;
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble human";
+    bubble.textContent = text;
+
+    content.appendChild(meta);
+    content.appendChild(bubble);
+
+    row.appendChild(content);
+    messagesEl.appendChild(row);
+
+    scrollToLatestMessage();
+
+    return bubble;
+  }
+
+
+  /* =====================================================
+     AI 메시지
+  ====================================================== */
+
+  function addAiBubble(text = "", timeText = getCurrentTimeText()) {
+    const row = document.createElement("div");
+    row.className = "message-row message-row--ai";
+
+    const profileImage =
+      createBotProfileImage("bot-profile");
+
+    const content = document.createElement("div");
+    content.className = "ai-content";
+
+    const meta = document.createElement("div");
+    meta.className = "message-meta message-meta--ai";
+    meta.textContent = `박병장 · ${timeText}`;
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble ai";
+    bubble.textContent = text;
+
+    const actions = document.createElement("div");
+    actions.className = "message-actions";
+
+    const saveButton = document.createElement("button");
+    saveButton.type = "button";
+    saveButton.className = "save-message-button";
+    saveButton.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 4.5h12v16l-6-4-6 4z"></path>
+      </svg>
+      <span>저장</span>
+    `;
+
+    actions.appendChild(saveButton);
+
+    content.appendChild(meta);
+    content.appendChild(bubble);
+    content.appendChild(actions);
+
+    row.appendChild(profileImage);
+    row.appendChild(content);
+
+    messagesEl.appendChild(row);
+
+    scrollToLatestMessage();
+
+    return bubble;
+  }
+
+
+  /* =====================================================
+     검색 상태 표시
+  ====================================================== */
+
+  function addStatus(text) {
+    const row = document.createElement("div");
+    row.className = "status-row";
+
+    const profileImage =
+      createBotProfileImage("status-profile");
+
+    const status = document.createElement("div");
+    status.className = "status";
+
+    status.innerHTML = `
+      <span class="status-spinner"></span>
+      <span>${escapeHtml(text)}</span>
+    `;
+
+    row.appendChild(profileImage);
+    row.appendChild(status);
+
+    messagesEl.appendChild(row);
+
+    scrollToLatestMessage();
+
+    return row;
+  }
+
+
+  function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+
+  /* =====================================================
+     스크롤
+  ====================================================== */
+
+  function scrollToLatestMessage() {
+    requestAnimationFrame(() => {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    });
+  }
+
+
+  /* =====================================================
+     현재 선택된 대화
+  ====================================================== */
+
+  function setActiveConversation(id) {
+    conversationId = id;
+
+    document
+      .querySelectorAll(".conversation-item")
+      .forEach((item) => {
+        item.classList.toggle(
+          "active",
+          item.dataset.id === id
+        );
+      });
+  }
+
+
+  /* =====================================================
+     사이드바 대화 목록 렌더링
+  ====================================================== */
+
+  function renderConversationList(conversations) {
+    conversationListEl.innerHTML = "";
+
+    if (!conversations || conversations.length === 0) {
+      const emptyItem = document.createElement("li");
+      emptyItem.className = "conversation-empty";
+      emptyItem.textContent = "아직 저장된 대화가 없습니다.";
+
+      conversationListEl.appendChild(emptyItem);
+      return;
     }
+
+    conversations.forEach((conv, index) => {
+      const li = document.createElement("li");
+
+      li.className =
+        "conversation-item" +
+        (conv.id === conversationId ? " active" : "");
+
+      li.dataset.id = conv.id;
+
+      const top = document.createElement("div");
+      top.className = "conversation-item__top";
+
+      const title = document.createElement("strong");
+      title.className = "conversation-title";
+      title.textContent = conv.title || "새 대화";
+
+      const date = document.createElement("span");
+      date.className = "conversation-date";
+      date.textContent = index === 0 ? "오늘" : "최근";
+
+      const preview = document.createElement("p");
+      preview.className = "conversation-preview";
+      preview.textContent =
+        conv.preview ||
+        conv.last_message ||
+        "대화 내용을 확인하려면 클릭하세요.";
+
+      top.appendChild(title);
+      top.appendChild(date);
+
+      li.appendChild(top);
+      li.appendChild(preview);
+
+      conversationListEl.appendChild(li);
+    });
   }
 
-  setActiveConversation(id);
-}
 
-
-// 사이드바 클릭 (초기 렌더 + refreshSidebar로 다시 그려진 목록 둘 다 처리)
-conversationListEl.addEventListener("click", (e) => {
-  const item = e.target.closest(".conversation-item");
-  if (!item) return;
-  loadConversation(item.dataset.id);
-});
-
-
-// 새 대화 버튼: 화면만 비우고 conversationId를 null로 되돌림.
-// 실제 Conversation row는 다음 메시지를 보낼 때 새로 생성됨.
-newChatBtn.addEventListener("click", () => {
-  messagesEl.innerHTML = "";
-  setActiveConversation(null);
-});
-
-
-function setSubmitting(isSubmitting) {
-  inputEl.disabled =
-    isSubmitting;
-
-  submitButtonEl.disabled =
-    isSubmitting;
-
-  submitButtonEl.textContent =
-    isSubmitting ? "대기" : "전송";
-
-  if (!isSubmitting) {
-    inputEl.focus();
-  }
-}
-
-
-formEl.addEventListener(
-  "submit",
-  async (event) => {
-    event.preventDefault();
-
-    const message =
-      inputEl.value.trim();
-
-    if (!message) return;
-
-    inputEl.value = "";
-
-    addHumanBubble(message);
-
-    const aiBubble =
-      addAiBubble("");
-
-    let statusEl = null;
-
-    const url = conversationId
-      ? STREAM_URL_TEMPLATE.replace(
-          "00000000-0000-0000-0000-000000000000",
-          conversationId
-        )
-      : NEW_STREAM_URL;
-
-    setSubmitting(true);
-
+  async function refreshSidebar() {
     try {
       const response =
-        await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-          body: JSON.stringify({
-            message
-          })
-        });
+        await fetch(CONVERSATION_LIST_URL);
+
+      if (!response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+
+      renderConversationList(
+        data.conversations || []
+      );
+
+    } catch (error) {
+      console.error(
+        "대화 목록 불러오기 오류:",
+        error
+      );
+    }
+  }
+
+
+  /* =====================================================
+     기존 대화 불러오기
+  ====================================================== */
+
+  async function loadConversation(id) {
+    try {
+      const response = await fetch(
+        CONVERSATION_MESSAGES_TEMPLATE.replace(
+          DUMMY_UUID,
+          id
+        )
+      );
 
       if (!response.ok) {
         throw new Error(
-          `서버 요청 실패: ${response.status}`
+          `대화 불러오기 실패: ${response.status}`
         );
       }
 
-      if (!response.body) {
-        throw new Error(
-          "서버에서 스트리밍 응답을 받지 못했습니다."
-        );
-      }
+      const data = await response.json();
 
-      const reader =
-        response.body.getReader();
+      messagesEl.innerHTML = "";
 
-      const decoder =
-        new TextDecoder();
-
-      let buffer = "";
-
-      while (true) {
-        const {
-          value,
-          done
-        } = await reader.read();
-
-        if (done) break;
-
-        buffer += decoder.decode(
-          value,
-          {
-            stream: true
-          }
-        );
-
-        const parts =
-          buffer.split("\n\n");
-
-        buffer =
-          parts.pop() ?? "";
-
-        for (const part of parts) {
-          const line =
-            part.trim();
+      if (!data.messages || data.messages.length === 0) {
+        renderWelcomeMessage();
+      } else {
+        for (const message of data.messages) {
+          const role =
+            message.role || message.type;
 
           if (
-            !line.startsWith("data:")
+            role === "human" ||
+            role === "user"
           ) {
-            continue;
-          }
-
-          let payload;
-
-          try {
-            payload =
-              JSON.parse(
-                line
-                  .slice(5)
-                  .trim()
-              );
-          } catch (error) {
-            console.error(
-              "SSE JSON 파싱 오류:",
-              error,
-              line
+            addHumanBubble(
+              message.content,
+              message.time || getCurrentTimeText()
             );
-
-            continue;
-          }
-
-          if (
-            payload.type === "meta"
-          ) {
-            setActiveConversation(
-              payload.conversation_id
+          } else {
+            addAiBubble(
+              message.content,
+              message.time || getCurrentTimeText()
             );
-
-          } else if (
-            payload.type === "token"
-          ) {
-            aiBubble.textContent +=
-              payload.content ?? "";
-
-          } else if (
-            payload.type ===
-            "tool_start"
-          ) {
-            if (statusEl) {
-              statusEl.remove();
-            }
-
-            statusEl =
-              addStatus(
-                `🔍 ${payload.tool} 검색 중...`
-              );
-
-          } else if (
-            payload.type ===
-            "tool_end"
-          ) {
-            if (statusEl) {
-              statusEl.remove();
-              statusEl = null;
-            }
-
-          } else if (
-            payload.type === "error"
-          ) {
-            aiBubble.textContent +=
-              `\n[오류] ${payload.message}`;
-
-          } else if (
-            payload.type === "done"
-          ) {
-            if (statusEl) {
-              statusEl.remove();
-              statusEl = null;
-            }
-            refreshSidebar(); // 새 대화 제목/최근 순서 갱신
           }
-
-          scrollToLatestMessage();
         }
       }
 
-      if (
-        !aiBubble.textContent.trim()
-      ) {
-        aiBubble.textContent =
-          "답변을 생성하지 못했습니다. 다시 질문해 주십시오.";
-      }
+      setActiveConversation(id);
+      inputEl.focus();
 
     } catch (error) {
       console.error(error);
 
-      if (statusEl) {
-        statusEl.remove();
-        statusEl = null;
-      }
+      messagesEl.innerHTML = "";
 
-      aiBubble.textContent =
-        `[오류] ${error.message}`;
-
-    } finally {
-      setSubmitting(false);
-      scrollToLatestMessage();
+      addAiBubble(
+        `[오류] ${error.message}`
+      );
     }
   }
-);
+
+
+  /* =====================================================
+     사이드바 클릭
+  ====================================================== */
+
+  conversationListEl.addEventListener(
+    "click",
+    (event) => {
+      const item =
+        event.target.closest(".conversation-item");
+
+      if (!item || !item.dataset.id) {
+        return;
+      }
+
+      loadConversation(item.dataset.id);
+    }
+  );
+
+
+  /* =====================================================
+     새 대화
+  ====================================================== */
+
+  newChatBtn.addEventListener(
+    "click",
+    () => {
+      setActiveConversation(null);
+      renderWelcomeMessage();
+      inputEl.focus();
+    }
+  );
+
+
+  /* =====================================================
+     전송 중 상태
+  ====================================================== */
+
+  function setSubmitting(isSubmitting) {
+    inputEl.disabled = isSubmitting;
+    submitButtonEl.disabled = isSubmitting;
+
+    submitButtonEl.classList.toggle(
+      "is-loading",
+      isSubmitting
+    );
+
+    if (!isSubmitting) {
+      inputEl.focus();
+    }
+  }
+
+
+  /* =====================================================
+     메시지 전송 및 스트리밍 응답
+  ====================================================== */
+
+  formEl.addEventListener(
+    "submit",
+    async (event) => {
+      event.preventDefault();
+
+      const message =
+        inputEl.value.trim();
+
+      if (!message) {
+        return;
+      }
+
+      inputEl.value = "";
+
+      addHumanBubble(message);
+
+      const aiBubble =
+        addAiBubble("");
+
+      let statusEl = null;
+
+      const url = conversationId
+        ? STREAM_URL_TEMPLATE.replace(
+            DUMMY_UUID,
+            conversationId
+          )
+        : NEW_STREAM_URL;
+
+      setSubmitting(true);
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            message: message
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `서버 요청 실패: ${response.status}`
+          );
+        }
+
+        if (!response.body) {
+          throw new Error(
+            "서버에서 스트리밍 응답을 받지 못했습니다."
+          );
+        }
+
+        const reader =
+          response.body.getReader();
+
+        const decoder =
+          new TextDecoder("utf-8");
+
+        let buffer = "";
+
+        while (true) {
+          const { value, done } =
+            await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          buffer += decoder.decode(
+            value,
+            { stream: true }
+          );
+
+          const parts =
+            buffer.split("\n\n");
+
+          buffer =
+            parts.pop() ?? "";
+
+          for (const part of parts) {
+            const lines =
+              part.split("\n");
+
+            for (const currentLine of lines) {
+              const line =
+                currentLine.trim();
+
+              if (!line.startsWith("data:")) {
+                continue;
+              }
+
+              let payload;
+
+              try {
+                payload = JSON.parse(
+                  line.slice(5).trim()
+                );
+              } catch (error) {
+                console.error(
+                  "SSE JSON 파싱 오류:",
+                  error,
+                  line
+                );
+
+                continue;
+              }
+
+              if (payload.type === "meta") {
+                setActiveConversation(
+                  payload.conversation_id
+                );
+
+              } else if (payload.type === "token") {
+                aiBubble.textContent +=
+                  payload.content ?? "";
+
+              } else if (payload.type === "tool_start") {
+                if (statusEl) {
+                  statusEl.remove();
+                }
+
+                statusEl = addStatus(
+                  `${payload.tool || "자료"} 검색 중...`
+                );
+
+              } else if (payload.type === "tool_end") {
+                if (statusEl) {
+                  statusEl.remove();
+                  statusEl = null;
+                }
+
+              } else if (payload.type === "error") {
+                aiBubble.textContent +=
+                  `\n[오류] ${payload.message}`;
+
+              } else if (payload.type === "done") {
+                if (statusEl) {
+                  statusEl.remove();
+                  statusEl = null;
+                }
+
+                refreshSidebar();
+              }
+
+              scrollToLatestMessage();
+            }
+          }
+        }
+
+        if (!aiBubble.textContent.trim()) {
+          aiBubble.textContent =
+            "답변을 생성하지 못했습니다. 다시 질문해 주세요.";
+        }
+
+      } catch (error) {
+        console.error(error);
+
+        if (statusEl) {
+          statusEl.remove();
+          statusEl = null;
+        }
+
+        aiBubble.textContent =
+          `[오류] ${error.message}`;
+
+      } finally {
+        setSubmitting(false);
+        scrollToLatestMessage();
+      }
+    }
+  );
+
+
+  /* =====================================================
+     페이지 최초 실행
+  ====================================================== */
+
+  renderWelcomeMessage();
+  inputEl.focus();
 </script>
 {% endblock %}
