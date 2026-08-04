@@ -6,6 +6,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     initTabs();
     initModal();
+    initProfileMenu();
 });
 
 /* ---------- 공통 탭 전환(개인기록 D-day/일지/목표, 챗봇 사이드바 최근/저장/카테고리) ---------- */
@@ -44,5 +45,31 @@ function initModal() {
             const modal = closeBtn.closest(".modal-overlay");
             if (modal) modal.classList.remove("active");
         });
+    });
+}
+
+/* ---------- 네비게이션 프로필 드롭다운 ---------- */
+function initProfileMenu() {
+    const toggleBtn = document.getElementById("profile-menu-toggle");
+    const dropdown = document.getElementById("profile-dropdown");
+    if (!toggleBtn || !dropdown) return;
+
+    toggleBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isOpen = dropdown.style.display === "block";
+        dropdown.style.display = isOpen ? "none" : "block";
+    });
+
+    // 드롭다운 내부 클릭은 닫히지 않도록
+    dropdown.addEventListener("click", (e) => e.stopPropagation());
+
+    // 바깥 클릭 시 닫기
+    document.addEventListener("click", () => {
+        dropdown.style.display = "none";
+    });
+
+    // ESC 키로 닫기
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") dropdown.style.display = "none";
     });
 }
