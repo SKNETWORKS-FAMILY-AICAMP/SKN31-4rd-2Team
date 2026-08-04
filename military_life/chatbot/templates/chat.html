@@ -5,30 +5,47 @@
 
 {% block nav_chatbot_active %}active{% endblock %}
 
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'chatbot/css/chatbot.css' %}">
+<link
+  rel="stylesheet"
+  href="{% static 'chatbot/css/chatbot.css' %}"
+>
+
+<style>
+  :root {
+    --camouflage-bg-url:
+      url("{% static 'images/camouflage_bg.png' %}");
+  }
+</style>
 {% endblock %}
 
 
 {% block content %}
 <div class="chat-layout">
 
-  <!-- =====================================================
-       왼쪽 대화 목록
-  ====================================================== -->
+  <!-- ==========================================
+       왼쪽 사이드바
+  =========================================== -->
   <aside class="chat-sidebar">
 
     <!-- 사용자 정보 -->
     <div class="sidebar-profile">
       <div class="sidebar-profile__top">
-        <span class="rank-badge">상병</span>
+
+        <span class="rank-badge">
+          상병
+        </span>
 
         <div class="sidebar-profile__info">
           <strong class="sidebar-username">
-            {{ request.user.username|default:"sehee" }}
+            {{ request.user.username|default:"student" }}
           </strong>
 
-          <div class="sidebar-stars" aria-label="평점 3점">
+          <div
+            class="sidebar-stars"
+            aria-label="평점 3점"
+          >
             ★★★
           </div>
         </div>
@@ -38,13 +55,16 @@
           class="profile-toggle"
           aria-label="사용자 메뉴"
         >
-         ⌄
+          ⌄
         </button>
+
       </div>
     </div>
 
-    <!-- 탭 -->
+
+    <!-- 사이드바 탭 -->
     <div class="sidebar-tabs">
+
       <button
         type="button"
         class="sidebar-tab active"
@@ -65,27 +85,43 @@
       >
         카테고리
       </button>
+
     </div>
 
-    <!-- 새 대화 -->
-    <button id="new-chat-btn" type="button">
-      <span class="new-chat-icon">＋</span>
-      <span>새 대화</span>
+
+    <!-- 새 대화 버튼 -->
+    <button
+      id="new-chat-btn"
+      type="button"
+    >
+      <span class="new-chat-icon">
+        ＋
+      </span>
+
+      <span>
+        새 대화
+      </span>
     </button>
+
 
     <!-- 최근 대화 제목 -->
     <div class="conversation-section-title">
       최근 대화
     </div>
 
-    <!-- 대화 목록 -->
+
+    <!-- 최근 대화 목록 -->
     <ul id="conversation-list">
+
       {% for conv in conversations %}
+
       <li
         class="conversation-item"
         data-id="{{ conv.id }}"
       >
+
         <div class="conversation-item__top">
+
           <strong class="conversation-title">
             {{ conv.title|default:"새 대화" }}
           </strong>
@@ -97,32 +133,42 @@
               최근
             {% endif %}
           </span>
+
         </div>
 
         <p class="conversation-preview">
           대화 내용을 확인하려면 클릭하세요.
         </p>
+
       </li>
+
       {% empty %}
+
       <li class="conversation-empty">
         아직 저장된 대화가 없습니다.
       </li>
+
       {% endfor %}
+
     </ul>
 
+
+    <!-- 사이드바 하단 -->
     <div class="sidebar-bottom">
-      <span>쿠키 관리 또는 로그아웃</span>
+      쿠키 관리 또는 로그아웃
     </div>
+
   </aside>
 
 
-  <!-- =====================================================
-       오른쪽 채팅 화면
-  ====================================================== -->
+  <!-- ==========================================
+       오른쪽 채팅 메인 화면
+  =========================================== -->
   <main class="chat-main">
 
     <!-- 상단 챗봇 정보 -->
     <header class="chat-main-header">
+
       <div class="chat-main-header__left">
 
         <button
@@ -135,26 +181,41 @@
           <span></span>
         </button>
 
+
         <img
           class="header-bot-profile"
           src="{% static 'images/bot_profile.png' %}"
           alt="박병장 프로필"
         >
 
+
         <div class="header-bot-info">
-          <strong>박병장</strong>
-          <span>군 법규 및 병영생활 AI 상담</span>
+
+          <strong>
+            박병장
+          </strong>
+
+          <span>
+            군 법규 및 병영생활 AI 상담
+          </span>
+
         </div>
+
       </div>
 
+
       <div class="online-badge">
+
         <span class="online-dot"></span>
+
         온라인
+
       </div>
+
     </header>
 
 
-    <!-- 메시지 영역 -->
+    <!-- 메시지 출력 영역 -->
     <section
       id="messages"
       class="chat-messages"
@@ -165,7 +226,11 @@
     <!-- 하단 입력 영역 -->
     <footer class="chat-footer">
 
-      <form id="form" class="chat-input-form">
+      <form
+        id="form"
+        class="chat-input-form"
+      >
+
         <input
           id="input"
           type="text"
@@ -174,11 +239,13 @@
           aria-label="질문 입력"
         >
 
+
         <button
           id="submit-button"
           type="submit"
           aria-label="메시지 전송"
         >
+
           <svg
             viewBox="0 0 24 24"
             aria-hidden="true"
@@ -187,24 +254,29 @@
               d="M21 3L10.5 13.5M21 3L14.5 21L10.5 13.5M21 3L3 9.5L10.5 13.5"
             />
           </svg>
+
         </button>
+
       </form>
+
 
       <p class="chat-notice">
         AI 답변은 참고용입니다. 중요한 사안은 법무관에게 확인하세요.
       </p>
+
     </footer>
 
   </main>
+
 </div>
 {% endblock %}
 
 
 {% block extra_js %}
 <script>
-  /* =====================================================
-     Django URL 및 정적 파일
-  ====================================================== */
+  /* ==========================================
+     Django URL
+  =========================================== */
 
   const NEW_STREAM_URL =
     "{% url 'chatbot:chat-stream-new' %}";
@@ -225,9 +297,9 @@
     "{% static 'images/bot_profile.png' %}";
 
 
-  /* =====================================================
+  /* ==========================================
      기본 변수
-  ====================================================== */
+  =========================================== */
 
   let conversationId = null;
 
@@ -250,47 +322,63 @@
     document.getElementById("new-chat-btn");
 
 
-  /* =====================================================
-     시간 표시
-  ====================================================== */
+  /* ==========================================
+     현재 시간
+  =========================================== */
 
   function getCurrentTimeText() {
     const now = new Date();
 
-    const hours = now.getHours();
-    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const hours =
+      now.getHours();
 
-    const period = hours < 12 ? "오전" : "오후";
-    const displayHour = hours % 12 || 12;
+    const minutes =
+      String(now.getMinutes()).padStart(2, "0");
+
+    const period =
+      hours < 12 ? "오전" : "오후";
+
+    const displayHour =
+      hours % 12 || 12;
 
     return `${period} ${displayHour}:${minutes}`;
   }
 
 
-  /* =====================================================
-     봇 프로필 이미지 만들기
-  ====================================================== */
+  /* ==========================================
+     프로필 이미지 생성
+  =========================================== */
 
-  function createBotProfileImage(className = "bot-profile") {
-    const profileImage = document.createElement("img");
+  function createBotProfileImage(
+    className = "bot-profile"
+  ) {
+    const profileImage =
+      document.createElement("img");
 
-    profileImage.className = className;
-    profileImage.src = BOT_PROFILE_IMAGE;
-    profileImage.alt = "박병장 프로필";
+    profileImage.className =
+      className;
 
-    profileImage.addEventListener("error", () => {
-      profileImage.classList.add("image-error");
-      profileImage.removeAttribute("src");
-      profileImage.alt = "박병장";
-    });
+    profileImage.src =
+      BOT_PROFILE_IMAGE;
+
+    profileImage.alt =
+      "박병장 프로필";
+
+    profileImage.addEventListener(
+      "error",
+      () => {
+        profileImage.style.display =
+          "none";
+      }
+    );
 
     return profileImage;
   }
 
 
-  /* =====================================================
+  /* ==========================================
      최초 인사 메시지
-  ====================================================== */
+  =========================================== */
 
   function renderWelcomeMessage() {
     messagesEl.innerHTML = "";
@@ -302,29 +390,53 @@
   }
 
 
-  /* =====================================================
-     사용자 메시지
-  ====================================================== */
+  /* ==========================================
+     사용자 메시지 생성
+  =========================================== */
 
-  function addHumanBubble(text, timeText = getCurrentTimeText()) {
-    const row = document.createElement("div");
-    row.className = "message-row message-row--human";
+  function addHumanBubble(
+    text,
+    timeText = getCurrentTimeText()
+  ) {
+    const row =
+      document.createElement("div");
 
-    const content = document.createElement("div");
-    content.className = "human-content";
+    row.className =
+      "message-row message-row--human";
 
-    const meta = document.createElement("div");
-    meta.className = "message-meta message-meta--human";
-    meta.textContent = `나 · ${timeText}`;
 
-    const bubble = document.createElement("div");
-    bubble.className = "bubble human";
-    bubble.textContent = text;
+    const content =
+      document.createElement("div");
+
+    content.className =
+      "human-content";
+
+
+    const meta =
+      document.createElement("div");
+
+    meta.className =
+      "message-meta message-meta--human";
+
+    meta.textContent =
+      `나 · ${timeText}`;
+
+
+    const bubble =
+      document.createElement("div");
+
+    bubble.className =
+      "bubble human";
+
+    bubble.textContent =
+      text;
+
 
     content.appendChild(meta);
     content.appendChild(bubble);
 
     row.appendChild(content);
+
     messagesEl.appendChild(row);
 
     scrollToLatestMessage();
@@ -333,40 +445,76 @@
   }
 
 
-  /* =====================================================
-     AI 메시지
-  ====================================================== */
+  /* ==========================================
+     AI 메시지 생성
+  =========================================== */
 
-  function addAiBubble(text = "", timeText = getCurrentTimeText()) {
-    const row = document.createElement("div");
-    row.className = "message-row message-row--ai";
+  function addAiBubble(
+    text = "",
+    timeText = getCurrentTimeText()
+  ) {
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "message-row message-row--ai";
+
 
     const profileImage =
       createBotProfileImage("bot-profile");
 
-    const content = document.createElement("div");
-    content.className = "ai-content";
 
-    const meta = document.createElement("div");
-    meta.className = "message-meta message-meta--ai";
-    meta.textContent = `박병장 · ${timeText}`;
+    const content =
+      document.createElement("div");
 
-    const bubble = document.createElement("div");
-    bubble.className = "bubble ai";
-    bubble.textContent = text;
+    content.className =
+      "ai-content";
 
-    const actions = document.createElement("div");
-    actions.className = "message-actions";
 
-    const saveButton = document.createElement("button");
-    saveButton.type = "button";
-    saveButton.className = "save-message-button";
+    const meta =
+      document.createElement("div");
+
+    meta.className =
+      "message-meta message-meta--ai";
+
+    meta.textContent =
+      `박병장 · ${timeText}`;
+
+
+    const bubble =
+      document.createElement("div");
+
+    bubble.className =
+      "bubble ai";
+
+    bubble.textContent =
+      text;
+
+
+    const actions =
+      document.createElement("div");
+
+    actions.className =
+      "message-actions";
+
+
+    const saveButton =
+      document.createElement("button");
+
+    saveButton.type =
+      "button";
+
+    saveButton.className =
+      "save-message-button";
+
     saveButton.innerHTML = `
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M6 4.5h12v16l-6-4-6 4z"></path>
       </svg>
+
       <span>저장</span>
     `;
+
 
     actions.appendChild(saveButton);
 
@@ -385,24 +533,45 @@
   }
 
 
-  /* =====================================================
+  /* ==========================================
      검색 상태 표시
-  ====================================================== */
+  =========================================== */
 
   function addStatus(text) {
-    const row = document.createElement("div");
-    row.className = "status-row";
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "status-row";
+
 
     const profileImage =
       createBotProfileImage("status-profile");
 
-    const status = document.createElement("div");
-    status.className = "status";
 
-    status.innerHTML = `
-      <span class="status-spinner"></span>
-      <span>${escapeHtml(text)}</span>
-    `;
+    const status =
+      document.createElement("div");
+
+    status.className =
+      "status";
+
+
+    const spinner =
+      document.createElement("span");
+
+    spinner.className =
+      "status-spinner";
+
+
+    const statusText =
+      document.createElement("span");
+
+    statusText.textContent =
+      text;
+
+
+    status.appendChild(spinner);
+    status.appendChild(statusText);
 
     row.appendChild(profileImage);
     row.appendChild(status);
@@ -415,27 +584,21 @@
   }
 
 
-  function escapeHtml(text) {
-    const div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-
-  /* =====================================================
-     스크롤
-  ====================================================== */
+  /* ==========================================
+     최신 메시지로 스크롤
+  =========================================== */
 
   function scrollToLatestMessage() {
     requestAnimationFrame(() => {
-      messagesEl.scrollTop = messagesEl.scrollHeight;
+      messagesEl.scrollTop =
+        messagesEl.scrollHeight;
     });
   }
 
 
-  /* =====================================================
-     현재 선택된 대화
-  ====================================================== */
+  /* ==========================================
+     현재 대화 선택
+  =========================================== */
 
   function setActiveConversation(id) {
     conversationId = id;
@@ -451,70 +614,121 @@
   }
 
 
-  /* =====================================================
+  /* ==========================================
      사이드바 대화 목록 렌더링
-  ====================================================== */
+  =========================================== */
 
-  function renderConversationList(conversations) {
+  function renderConversationList(
+    conversations
+  ) {
     conversationListEl.innerHTML = "";
 
-    if (!conversations || conversations.length === 0) {
-      const emptyItem = document.createElement("li");
-      emptyItem.className = "conversation-empty";
-      emptyItem.textContent = "아직 저장된 대화가 없습니다.";
+    if (
+      !conversations ||
+      conversations.length === 0
+    ) {
+      const emptyItem =
+        document.createElement("li");
 
-      conversationListEl.appendChild(emptyItem);
+      emptyItem.className =
+        "conversation-empty";
+
+      emptyItem.textContent =
+        "아직 저장된 대화가 없습니다.";
+
+      conversationListEl.appendChild(
+        emptyItem
+      );
+
       return;
     }
 
-    conversations.forEach((conv, index) => {
-      const li = document.createElement("li");
 
-      li.className =
-        "conversation-item" +
-        (conv.id === conversationId ? " active" : "");
+    conversations.forEach(
+      (conv, index) => {
+        const li =
+          document.createElement("li");
 
-      li.dataset.id = conv.id;
+        li.className =
+          "conversation-item" +
+          (
+            conv.id === conversationId
+              ? " active"
+              : ""
+          );
 
-      const top = document.createElement("div");
-      top.className = "conversation-item__top";
+        li.dataset.id =
+          conv.id;
 
-      const title = document.createElement("strong");
-      title.className = "conversation-title";
-      title.textContent = conv.title || "새 대화";
 
-      const date = document.createElement("span");
-      date.className = "conversation-date";
-      date.textContent = index === 0 ? "오늘" : "최근";
+        const top =
+          document.createElement("div");
 
-      const preview = document.createElement("p");
-      preview.className = "conversation-preview";
-      preview.textContent =
-        conv.preview ||
-        conv.last_message ||
-        "대화 내용을 확인하려면 클릭하세요.";
+        top.className =
+          "conversation-item__top";
 
-      top.appendChild(title);
-      top.appendChild(date);
 
-      li.appendChild(top);
-      li.appendChild(preview);
+        const title =
+          document.createElement("strong");
 
-      conversationListEl.appendChild(li);
-    });
+        title.className =
+          "conversation-title";
+
+        title.textContent =
+          conv.title || "새 대화";
+
+
+        const date =
+          document.createElement("span");
+
+        date.className =
+          "conversation-date";
+
+        date.textContent =
+          index === 0 ? "오늘" : "최근";
+
+
+        const preview =
+          document.createElement("p");
+
+        preview.className =
+          "conversation-preview";
+
+        preview.textContent =
+          conv.preview ||
+          conv.last_message ||
+          "대화 내용을 확인하려면 클릭하세요.";
+
+
+        top.appendChild(title);
+        top.appendChild(date);
+
+        li.appendChild(top);
+        li.appendChild(preview);
+
+        conversationListEl.appendChild(li);
+      }
+    );
   }
 
+
+  /* ==========================================
+     사이드바 목록 갱신
+  =========================================== */
 
   async function refreshSidebar() {
     try {
       const response =
-        await fetch(CONVERSATION_LIST_URL);
+        await fetch(
+          CONVERSATION_LIST_URL
+        );
 
       if (!response.ok) {
         return;
       }
 
-      const data = await response.json();
+      const data =
+        await response.json();
 
       renderConversationList(
         data.conversations || []
@@ -529,18 +743,19 @@
   }
 
 
-  /* =====================================================
+  /* ==========================================
      기존 대화 불러오기
-  ====================================================== */
+  =========================================== */
 
   async function loadConversation(id) {
     try {
-      const response = await fetch(
-        CONVERSATION_MESSAGES_TEMPLATE.replace(
-          DUMMY_UUID,
-          id
-        )
-      );
+      const response =
+        await fetch(
+          CONVERSATION_MESSAGES_TEMPLATE.replace(
+            DUMMY_UUID,
+            id
+          )
+        );
 
       if (!response.ok) {
         throw new Error(
@@ -548,16 +763,25 @@
         );
       }
 
-      const data = await response.json();
+      const data =
+        await response.json();
 
       messagesEl.innerHTML = "";
 
-      if (!data.messages || data.messages.length === 0) {
+
+      if (
+        !data.messages ||
+        data.messages.length === 0
+      ) {
         renderWelcomeMessage();
+
       } else {
-        for (const message of data.messages) {
+        for (
+          const message of data.messages
+        ) {
           const role =
-            message.role || message.type;
+            message.role ||
+            message.type;
 
           if (
             role === "human" ||
@@ -565,18 +789,22 @@
           ) {
             addHumanBubble(
               message.content,
-              message.time || getCurrentTimeText()
+              message.time ||
+              getCurrentTimeText()
             );
+
           } else {
             addAiBubble(
               message.content,
-              message.time || getCurrentTimeText()
+              message.time ||
+              getCurrentTimeText()
             );
           }
         }
       }
 
       setActiveConversation(id);
+
       inputEl.focus();
 
     } catch (error) {
@@ -591,46 +819,60 @@
   }
 
 
-  /* =====================================================
-     사이드바 클릭
-  ====================================================== */
+  /* ==========================================
+     사이드바 대화 클릭
+  =========================================== */
 
   conversationListEl.addEventListener(
     "click",
     (event) => {
       const item =
-        event.target.closest(".conversation-item");
+        event.target.closest(
+          ".conversation-item"
+        );
 
-      if (!item || !item.dataset.id) {
+      if (
+        !item ||
+        !item.dataset.id
+      ) {
         return;
       }
 
-      loadConversation(item.dataset.id);
+      loadConversation(
+        item.dataset.id
+      );
     }
   );
 
 
-  /* =====================================================
+  /* ==========================================
      새 대화
-  ====================================================== */
+  =========================================== */
 
   newChatBtn.addEventListener(
     "click",
     () => {
       setActiveConversation(null);
+
       renderWelcomeMessage();
+
       inputEl.focus();
     }
   );
 
 
-  /* =====================================================
-     전송 중 상태
-  ====================================================== */
+  /* ==========================================
+     전송 상태
+  =========================================== */
 
-  function setSubmitting(isSubmitting) {
-    inputEl.disabled = isSubmitting;
-    submitButtonEl.disabled = isSubmitting;
+  function setSubmitting(
+    isSubmitting
+  ) {
+    inputEl.disabled =
+      isSubmitting;
+
+    submitButtonEl.disabled =
+      isSubmitting;
 
     submitButtonEl.classList.toggle(
       "is-loading",
@@ -643,9 +885,9 @@
   }
 
 
-  /* =====================================================
-     메시지 전송 및 스트리밍 응답
-  ====================================================== */
+  /* ==========================================
+     메시지 전송
+  =========================================== */
 
   formEl.addEventListener(
     "submit",
@@ -659,36 +901,49 @@
         return;
       }
 
+
       inputEl.value = "";
 
       addHumanBubble(message);
 
+
       const aiBubble =
         addAiBubble("");
 
+
       let statusEl = null;
 
-      const url = conversationId
-        ? STREAM_URL_TEMPLATE.replace(
-            DUMMY_UUID,
-            conversationId
-          )
-        : NEW_STREAM_URL;
+
+      const url =
+        conversationId
+          ? STREAM_URL_TEMPLATE.replace(
+              DUMMY_UUID,
+              conversationId
+            )
+          : NEW_STREAM_URL;
+
 
       setSubmitting(true);
 
+
       try {
-        const response = await fetch(url, {
-          method: "POST",
+        const response =
+          await fetch(
+            url,
+            {
+              method: "POST",
 
-          headers: {
-            "Content-Type": "application/json"
-          },
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
 
-          body: JSON.stringify({
-            message: message
-          })
-        });
+              body: JSON.stringify({
+                message: message
+              })
+            }
+          );
+
 
         if (!response.ok) {
           throw new Error(
@@ -696,11 +951,13 @@
           );
         }
 
+
         if (!response.body) {
           throw new Error(
             "서버에서 스트리밍 응답을 받지 못했습니다."
           );
         }
+
 
         const reader =
           response.body.getReader();
@@ -710,18 +967,26 @@
 
         let buffer = "";
 
+
         while (true) {
-          const { value, done } =
-            await reader.read();
+          const {
+            value,
+            done
+          } = await reader.read();
+
 
           if (done) {
             break;
           }
 
+
           buffer += decoder.decode(
             value,
-            { stream: true }
+            {
+              stream: true
+            }
           );
+
 
           const parts =
             buffer.split("\n\n");
@@ -729,24 +994,37 @@
           buffer =
             parts.pop() ?? "";
 
+
           for (const part of parts) {
             const lines =
               part.split("\n");
 
-            for (const currentLine of lines) {
+
+            for (
+              const currentLine of lines
+            ) {
               const line =
                 currentLine.trim();
 
-              if (!line.startsWith("data:")) {
+
+              if (
+                !line.startsWith("data:")
+              ) {
                 continue;
               }
 
+
               let payload;
 
+
               try {
-                payload = JSON.parse(
-                  line.slice(5).trim()
-                );
+                payload =
+                  JSON.parse(
+                    line
+                      .slice(5)
+                      .trim()
+                  );
+
               } catch (error) {
                 console.error(
                   "SSE JSON 파싱 오류:",
@@ -757,49 +1035,76 @@
                 continue;
               }
 
-              if (payload.type === "meta") {
+
+              if (
+                payload.type === "meta"
+              ) {
                 setActiveConversation(
                   payload.conversation_id
                 );
 
-              } else if (payload.type === "token") {
+
+              } else if (
+                payload.type === "token"
+              ) {
                 aiBubble.textContent +=
                   payload.content ?? "";
 
-              } else if (payload.type === "tool_start") {
+
+              } else if (
+                payload.type ===
+                "tool_start"
+              ) {
                 if (statusEl) {
                   statusEl.remove();
                 }
 
-                statusEl = addStatus(
-                  `${payload.tool || "자료"} 검색 중...`
-                );
+                statusEl =
+                  addStatus(
+                    `${payload.tool || "자료"} 검색 중...`
+                  );
 
-              } else if (payload.type === "tool_end") {
+
+              } else if (
+                payload.type ===
+                "tool_end"
+              ) {
                 if (statusEl) {
                   statusEl.remove();
+
                   statusEl = null;
                 }
 
-              } else if (payload.type === "error") {
+
+              } else if (
+                payload.type === "error"
+              ) {
                 aiBubble.textContent +=
                   `\n[오류] ${payload.message}`;
 
-              } else if (payload.type === "done") {
+
+              } else if (
+                payload.type === "done"
+              ) {
                 if (statusEl) {
                   statusEl.remove();
+
                   statusEl = null;
                 }
 
                 refreshSidebar();
               }
 
+
               scrollToLatestMessage();
             }
           }
         }
 
-        if (!aiBubble.textContent.trim()) {
+
+        if (
+          !aiBubble.textContent.trim()
+        ) {
           aiBubble.textContent =
             "답변을 생성하지 못했습니다. 다시 질문해 주세요.";
         }
@@ -807,27 +1112,32 @@
       } catch (error) {
         console.error(error);
 
+
         if (statusEl) {
           statusEl.remove();
+
           statusEl = null;
         }
+
 
         aiBubble.textContent =
           `[오류] ${error.message}`;
 
       } finally {
         setSubmitting(false);
+
         scrollToLatestMessage();
       }
     }
   );
 
 
-  /* =====================================================
+  /* ==========================================
      페이지 최초 실행
-  ====================================================== */
+  =========================================== */
 
   renderWelcomeMessage();
+
   inputEl.focus();
 </script>
 {% endblock %}
