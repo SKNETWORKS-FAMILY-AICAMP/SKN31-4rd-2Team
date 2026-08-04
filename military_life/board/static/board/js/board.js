@@ -105,15 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         const countSpan = document.getElementById('likeCount');
 
                         if (data.liked) {
-                            this.classList.remove('btn-secondary', 'text-dark');
-                            this.classList.add('btn-primary', 'text-white');
-                            icon.classList.remove('fa-regular');
-                            icon.classList.add('fa-solid');
+                            this.classList.add('active');
+                            icon.classList.remove('bi-hand-thumbs-up');
+                            icon.classList.add('bi-hand-thumbs-up-fill');
                         } else {
-                            this.classList.remove('btn-primary', 'text-white');
-                            this.classList.add('btn-secondary', 'text-dark');
-                            icon.classList.remove('fa-solid');
-                            icon.classList.add('fa-regular');
+                            this.classList.remove('active');
+                            icon.classList.remove('bi-hand-thumbs-up-fill');
+                            icon.classList.add('bi-hand-thumbs-up');
                         }
                         countSpan.textContent = data.likes_count;
                     }
