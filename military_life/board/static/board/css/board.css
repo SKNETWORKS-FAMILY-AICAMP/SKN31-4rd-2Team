@@ -85,7 +85,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    background-color: #7c5aa9;
+    background-color: #2b3a26;
     color: #ffffff;
     border: none;
     padding: 6px 14px;
@@ -101,7 +101,7 @@
 .board-btn-primary:hover,
 .board-btn-primary:focus,
 .board-btn-primary:active {
-    background-color: #9568d0;
+    background-color: #2b3a26;
     color: #ffffff;
     box-shadow: none;
 }
