@@ -13,7 +13,7 @@
 		</div>
 
 		<div style="min-width:240px;">
-			<div class="card text-dark" style="background:rgba(255,255,255,0.06); border:none;">
+			<div class="card text-dark" style="background:rgba(255,255,255,0.85); border:none;">
 				<div class="card-body">
 					<h6 class="card-subtitle">전역까지</h6>
 					<h2 class="fw-bold">{% if ddays is not None %}D-{{ ddays }}{% else %}D-47{% endif %}</h2>
@@ -31,31 +31,31 @@
 	<h5 class="mb-4">서비스 안내</h5>
 	<div class="row g-3">
 		<div class="col-md-4">
-			<div class="card h-100">
+			<a href="{% url 'chatbot:chat' %}" class="card h-100 text-decoration-none text-reset">
 				<div class="card-body">
 					<div class="mb-3" style="font-size:24px">💬</div>
 					<h6>AI 챗봇 상담</h6>
 					<p class="small">박병장과 함께 군 규정 & 병영생활 정보를 쉽게 확인하세요.</p>
 				</div>
-			</div>
+			</a>
 		</div>
 		<div class="col-md-4">
-			<div class="card h-100">
+			<a href="{% url 'records:records' %}" class="card h-100 text-decoration-none text-reset">
 				<div class="card-body">
 					<div class="mb-3" style="font-size:24px">📖</div>
 					<h6>개인 기록</h6>
 					<p class="small">전역 D-day, 목표 관리, 캘린더 일지로 군 생활을 기록하세요.</p>
 				</div>
-			</div>
+			</a>
 		</div>
 		<div class="col-md-4">
-			<div class="card h-100">
+			<a href="{% url 'board:list' %}" class="card h-100 text-decoration-none text-reset">
 				<div class="card-body">
 					<div class="mb-3" style="font-size:24px">👥</div>
 					<h6>익명 게시판</h6>
 					<p class="small">같은 상황의 동료들과 정보를 나누고 고민을 익명으로 공유하세요.</p>
 				</div>
-			</div>
+			</a>
 		</div>
 	</div>
 </section>

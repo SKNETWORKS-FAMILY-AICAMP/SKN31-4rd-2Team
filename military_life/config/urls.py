@@ -17,22 +17,9 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from django.shortcuts import redirect
-from django.urls import reverse
-
-from home.views import home as home_view
-
-
-def root(request):
-    # If authenticated, render the home view directly; otherwise redirect to login
-    if request.user.is_authenticated:
-        return home_view(request)
-    return redirect(reverse('account:login'))
-
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", root, name="root"),
     path("", include("home.urls")),
     path("account/", include("account.urls")),
     path("chatbot/", include("chatbot.urls")),

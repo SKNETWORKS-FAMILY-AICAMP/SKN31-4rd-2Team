@@ -61,13 +61,9 @@
                     </div>
                 </div>
 
-                <a class="icon-btn" href="{% url 'account:logout' %}" title="로그아웃">
-                    <i class="bi bi-box-arrow-right"></i>
-                </a>
+                <a class="btn-primary btn-primary--sm" href="{% url 'account:logout' %}">로그아웃</a>
             {% else %}
-                <a class="icon-btn" href="{% url 'account:login' %}" title="로그인">
-                    <i class="bi bi-box-arrow-in-right"></i>
-                </a>
+                <a class="btn-primary btn-primary--sm" href="{% url 'account:login' %}">로그인</a>
                 <a class="btn-primary btn-primary--sm" href="{% url 'account:signup' %}">회원가입</a>
             {% endif %}
         </div>
