@@ -25,7 +25,7 @@
                 <span class="badge mb-3" style="background: var(--color-primary-light); color: var(--color-olive);">
                     {{ post.category.name }}
                 </span>
-                <h1 class="h4 fw-bold mb-3">{{ post.title }}</h1>
+                <h1 class="fw-bold mb-3" style="font-size: 16px;">{{ post.title }}</h1>
                 <div class="d-flex gap-3 text-muted small">
                     <span><i class="bi bi-lock-fill"></i> 익명</span>
                     <span>{{ post.created_at|custom_timesince }}</span>
@@ -36,7 +36,8 @@
                     <!-- 신고 버튼 -->
                     <button class="btn btn-light btn-sm rounded-circle" id="reportBtn" title="신고하기"
                         data-bs-toggle="modal" data-bs-target="#reportModal">
-                        <i class="bi bi-exclamation-triangle-fill {% if user_has_reported %}text-danger{% else %}text-secondary{% endif %}"></i>
+                        <i
+                            class="bi bi-exclamation-triangle-fill {% if user_has_reported %}text-danger{% else %}text-secondary{% endif %}"></i>
                     </button>
 
                     <!-- 수정/삭제 드롭다운 -->
@@ -57,15 +58,14 @@
                 </div>
             </div>
 
-            <div class="post-content mb-5 text-dark" style="font-size: 16px; min-height: 150px; line-height: 1.6;">
+            <div class="post-content mb-3 text-dark" style="font-size: 16px; line-height: 1.6;">
                 {{ post.content|linebreaks }}
             </div>
 
             <!-- 하단 좋아요 버튼 -->
             <div class="d-flex justify-content-center">
-                <button
-                    class="btn-like-custom {% if user_has_liked %}active{% endif %}"
-                    id="likeBtn" data-url="{% url 'board:like' post.id %}">
+                <button class="btn-like-custom {% if user_has_liked %}active{% endif %}" id="likeBtn"
+                    data-url="{% url 'board:like' post.id %}">
                     <i class="bi bi-hand-thumbs-up{% if user_has_liked %}-fill{% endif %} me-1"></i>
                     <span id="likeCount">{{ likes_count }}</span>
                 </button>
@@ -76,14 +76,15 @@
     <!-- 댓글 영역 -->
     <div class="card border-0 shadow-sm" style="border-radius: var(--radius-md);">
         <div class="card-body p-4 p-md-5">
-            <h5 class="fw-bold mb-4">댓글 {{ comments.count }}개</h5>
+            <h5 class="fw-bold mb-4" style="font-size: 16px;">댓글 {{ comments.count }}개</h5>
 
-            <form method="POST" action="{% url 'board:comment_create' post.id %}" class="mb-5">
+            <form method="POST" action="{% url 'board:comment_create' post.id %}" class="mb-3">
                 {% csrf_token %}
-                <textarea name="content" class="form-control mb-2" style="background: var(--color-bg);" rows="3"
-                    placeholder="댓글을 남겨주세요. 완전한 익명으로 처리됩니다." required></textarea>
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-warning"><i class="bi bi-lock-fill"></i> 작성자 정보는 익명으로 처리됩니다.</small>
+                <textarea name="content" class="form-control mb-1"
+                    style="background: var(--color-bg); font-size: 16px; overflow: hidden; resize: none;" rows="2"
+                    placeholder="댓글을 남겨주세요. 완전한 익명으로 처리됩니다." required
+                    oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
+                <div class="d-flex justify-content-end align-items-center mt-2">
                     <button type="submit" class="board-btn-primary" style="padding: 10px 20px;">등록</button>
                 </div>
             </form>
@@ -108,7 +109,7 @@
                         </form>
                         {% endif %}
                     </div>
-                    <div class="text-dark" style="line-height: 1.5;">
+                    <div class="text-dark" style="font-size: 16px; line-height: 1.5;">
                         {{ comment.content|linebreaksbr }}
                     </div>
                 </div>
@@ -137,13 +138,13 @@
                     <!-- Note: For simplicity, category update is omitted in detail view. Can be added later. -->
                     <div class="mb-3">
                         <label for="update-title" class="form-label fw-bold">제목</label>
-                        <input type="text" class="form-control" style="background: var(--color-bg);" id="update-title"
-                            name="title" value="{{ post.title }}" required>
+                        <input type="text" class="form-control" style="background: var(--color-bg); font-size: 16px;"
+                            id="update-title" name="title" value="{{ post.title }}" required>
                     </div>
                     <div class="mb-3">
                         <label for="update-content" class="form-label fw-bold">내용</label>
-                        <textarea class="form-control" style="background: var(--color-bg);" id="update-content"
-                            name="content" rows="6" required>{{ post.content }}</textarea>
+                        <textarea class="form-control" style="background: var(--color-bg); font-size: 16px;"
+                            id="update-content" name="content" rows="6" required>{{ post.content }}</textarea>
                     </div>
                     <div class="d-flex justify-content-end gap-2 mt-4">
                         <button type="button" class="board-btn-secondary" data-bs-dismiss="modal">취소</button>

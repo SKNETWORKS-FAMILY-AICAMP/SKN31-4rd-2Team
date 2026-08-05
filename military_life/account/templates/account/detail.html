@@ -33,15 +33,42 @@
                 <span><i class="bi bi-eye"></i> {{ post.view_count }}</span>
                 <span><i class="bi bi-chat"></i> {{ post.comment_set.count }}</span>
             </div>
-            <form method="post" action="{% url 'board:delete' post.pk %}"
-                  onsubmit="return confirm('이 게시글을 삭제하시겠습니까?');">
-                {% csrf_token %}
-                <button type="submit" class="my-post-card__delete"><i class="bi bi-trash"></i> 삭제</button>
-            </form>
+            <button type="button" class="my-post-card__delete" onclick="deleteMyPost('{% url 'board:delete' post.pk %}')">
+                <i class="bi bi-trash"></i> 삭제
+            </button>
         </div>
     </div>
     {% endfor %}
 {% else %}
     <div class="empty-state">아직 작성한 게시글이 없습니다.</div>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function deleteMyPost(deleteUrl) {
+        if (confirm('이 게시글을 삭제하시겠습니까?')) {
+            fetch(deleteUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // 삭제 성공 시 페이지 새로고침하여 변경사항 반영
+                    window.location.reload();
+                } else {
+                    alert(data.message || '삭제에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('오류가 발생했습니다.');
+            });
+        }
+    }
+</script>
 {% endblock %}
