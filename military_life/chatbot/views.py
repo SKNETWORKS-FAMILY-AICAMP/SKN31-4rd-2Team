@@ -83,14 +83,23 @@ async def chat_stream(request, conversation_id=None):
     if not user_message:
         return JsonResponse({"error": "message is required"}, status=400)
 
-    # request.user는 SimpleLazyObject라서 ".is_authenticated"처럼 실제 속성을
-    # 건드리는 순간 세션/DB 조회(동기)가 일어난다. 그 "건드리는 순간"이
-    # sync_to_async 안에서 일어나야 스레드에서 안전하게 처리됨.
-    # (단순히 request.user만 리턴하면 아직 lazy 상태 그대로라 나중에 async
-    #  컨텍스트에서 다시 터짐 -> is_authenticated 체크까지 통째로 sync_to_async에 넣는다)
-    user = await sync_to_async(
-        lambda: request.user if request.user.is_authenticated else None
-    )()
+    # request.user는 SimpleLazyObject라서 ".is_authenticated"나 ".rank"처럼
+    # 실제 속성을 건드리는 순간 세션/DB 조회(동기)가 일어난다.
+    # 그 "건드리는 순간"이 sync_to_async 안에서 일어나야 스레드에서 안전하게 처리됨.
+    def _resolve_user_and_rank():
+        if not request.user.is_authenticated:
+            return None, None
+        u = request.user
+        rank = getattr(getattr(u, "profile", None), "rank", None)
+        return u, rank
+
+    user, user_rank = await sync_to_async(_resolve_user_and_rank)()
+
+    # LLM에 넘길 prompt에만 계급 정보를 붙인다 (저장되는 메시지 원문은 그대로 유지)
+    if user_rank is not None:
+        prompt_message = f"질문자 계급[{user_rank}]\n{user_message}"
+    else:
+        prompt_message = user_message
 
     is_new_conversation = conversation_id is None
 
@@ -120,7 +129,7 @@ async def chat_stream(request, conversation_id=None):
         references: list[str] = []
 
         try:
-            async for event in chatbot.astream(user_message, history, conversation.thread_id):
+            async for event in chatbot.astream(prompt_message, history, conversation.thread_id):
                 if event["type"] == "token":
                     yield _sse({"type": "token", "content": event["content"]})
                 elif event["type"] == "tool_start":
