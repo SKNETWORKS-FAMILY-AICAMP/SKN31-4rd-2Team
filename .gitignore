@@ -229,3 +229,4 @@ __marimo__/
 staticfiles/
 
 requirements.txt
+test.py
