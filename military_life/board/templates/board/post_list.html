@@ -65,8 +65,8 @@
                         </span>
                         <small class="text-muted">{{ post.created_at|custom_timesince }}</small>
                     </div>
-                    <h5 class="card-title fw-bold mb-2">{{ post.title }}</h5>
-                    <p class="card-text text-muted small mb-4">{{ post.content|truncatewords:20 }}</p>
+                    <h5 class="card-title fw-bold mb-2" style="font-size: 16px;">{{ post.title }}</h5>
+                    <p class="card-text text-muted mb-4" style="font-size: 16px;">{{ post.content|truncatewords:20 }}</p>
 
                     <div class="d-flex justify-content-between align-items-center border-top pt-3">
                         <div class="d-flex gap-3 text-muted small">
@@ -113,12 +113,12 @@
                     </div>
                     <div class="mb-3">
                         <label for="title" class="form-label fw-bold">제목</label>
-                        <input type="text" class="form-control" style="background: var(--color-bg);" id="title"
+                        <input type="text" class="form-control" style="background: var(--color-bg); font-size: 16px;" id="title"
                             name="title" placeholder="제목을 입력해 주세요" required>
                     </div>
                     <div class="mb-3">
                         <label for="content" class="form-label fw-bold">내용</label>
-                        <textarea class="form-control" style="background: var(--color-bg);" id="content" name="content"
+                        <textarea class="form-control" style="background: var(--color-bg); font-size: 16px;" id="content" name="content"
                             rows="6" placeholder="고민이나 질문을 자유롭게 작성해 주세요. 완전한 익명으로 처리됩니다." required></textarea>
                     </div>
                     <div class="alert alert-warning d-flex align-items-center py-2" role="alert"
