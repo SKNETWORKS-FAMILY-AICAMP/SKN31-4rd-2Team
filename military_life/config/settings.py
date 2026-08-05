@@ -124,6 +124,11 @@ USE_I18N = True
 USE_TZ = True
 
 
+# Authentication
+# https://docs.djangoproject.com/en/6.0/topics/auth/default/#django.contrib.auth.decorators.login_required
+LOGIN_URL = "account:login"
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 

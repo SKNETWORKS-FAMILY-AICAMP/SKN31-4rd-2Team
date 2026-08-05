@@ -1,6 +1,7 @@
 import json
 
 from asgiref.sync import sync_to_async
+from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -12,15 +13,14 @@ from .models import Conversation, Message
 RECENT_CONVERSATION_LIMIT = 10
 
 
+@login_required
 def chat_page(request):
     """채팅 페이지 (chat.html) 렌더링. 사이드바용 최근 대화 10개도 같이 내려준다."""
-    conversations = []
-    if request.user.is_authenticated:
-        conversations = list(
-            Conversation.objects.filter(user=request.user).order_by("-updated_at")[
-                :RECENT_CONVERSATION_LIMIT
-            ]
-        )
+    conversations = list(
+        Conversation.objects.filter(user=request.user).order_by("-updated_at")[
+            :RECENT_CONVERSATION_LIMIT
+        ]
+    )
     return render(request, "chat.html", {"conversations": conversations})
 
 
