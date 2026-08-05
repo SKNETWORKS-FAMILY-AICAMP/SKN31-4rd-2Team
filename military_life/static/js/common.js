@@ -7,8 +7,32 @@ document.addEventListener("DOMContentLoaded", () => {
     initTabs();
     initModal();
     initProfileMenu();
-    initToast();
+    initToasts();
 });
+
+/* ---------- 토스트 알림 자동 사라짐 + 닫기 버튼 ---------- */
+function initToasts() {
+    document.querySelectorAll("[data-toast]").forEach((toast) => {
+        toast.style.transition = "opacity .4s ease";
+
+        const dismiss = () => {
+            toast.style.opacity = "0";
+            setTimeout(() => toast.remove(), 400);
+        };
+
+        // 자동 사라짐 (3초 후)
+        const timer = setTimeout(dismiss, 2000);
+
+        // 닫기 버튼 클릭 시 즉시 사라짐
+        const closeBtn = toast.querySelector("[data-toast-close]");
+        if (closeBtn) {
+            closeBtn.addEventListener("click", () => {
+                clearTimeout(timer);
+                dismiss();
+            });
+        }
+    });
+}
 
 /* ---------- 공통 탭 전환(개인기록 D-day/일지/목표, 챗봇 사이드바 최근/저장/카테고리) ---------- */
 function initTabs() {
@@ -46,22 +70,6 @@ function initModal() {
             const modal = closeBtn.closest(".modal-overlay");
             if (modal) modal.classList.remove("active");
         });
-    });
-}
-
-/* ---------- 알림 토스트(닫기 버튼 + 자동 소멸) ---------- */
-function initToast() {
-    const dismiss = (toast) => {
-        if (!toast || toast.classList.contains("app-toast--hide")) return;
-        toast.classList.add("app-toast--hide");
-        toast.addEventListener("animationend", () => toast.remove(), { once: true });
-    };
-
-    document.querySelectorAll("[data-toast]").forEach((toast) => {
-        const closeBtn = toast.querySelector("[data-toast-close]");
-        if (closeBtn) closeBtn.addEventListener("click", () => dismiss(toast));
-
-        setTimeout(() => dismiss(toast), 4000);
     });
 }
 
