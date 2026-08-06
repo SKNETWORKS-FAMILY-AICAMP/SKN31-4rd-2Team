@@ -59,3 +59,15 @@ class Report(models.Model):
 
     def __str__(self):
         return f"Report by {self.reporter} on {self.post}"
+
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
+@receiver(post_delete, sender=Report)
+def delete_post_on_report_delete(sender, instance, **kwargs):
+    """
+    신고 내역(Report)이 삭제될 때, 해당 신고가 연결된 원본 게시글(Post)도 함께 삭제합니다.
+    (Post.objects.filter.delete()를 사용하여 연쇄 삭제(Cascade) 충돌을 방지합니다.)
+    """
+    if instance.post_id:
+        Post.objects.filter(id=instance.post_id).delete()

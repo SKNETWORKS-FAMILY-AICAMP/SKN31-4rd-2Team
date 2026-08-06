@@ -6,21 +6,15 @@ from .models import Post, Category, Comment, PostLike, Report
 import json
 
 from django.contrib.auth import get_user_model, login
+from django.contrib import messages
 
 DEFAULT_CATEGORIES = ['휴가', '징계', '급여', '전역', '병영생활']
 
-# @login_required # 테스트를 위해 임시로 비활성화
+@login_required
 def post_list(request):
     """
     게시판 목록을 조회하는 뷰입니다.
     """
-    # --- 테스트를 위한 자동 로그인 코드 ---
-    if not request.user.is_authenticated:
-        User = get_user_model()
-        user = User.objects.first() # 가장 첫 번째 유저(ex. admin) 가져오기
-        if user:
-            login(request, user)
-    # -----------------------------------
     
     category_name = request.GET.get('category')
     search_query = request.GET.get('q')
@@ -57,7 +51,11 @@ def post_detail(request, pk):
     사용자의 세션을 이용하여 새로고침 시 조회수가 중복으로 올라가는 것을 방지합니다.
     댓글 목록과 좋아요 상태를 함께 템플릿으로 전달합니다.
     """
-    post = get_object_or_404(Post, pk=pk)
+    try:
+        post = Post.objects.get(pk=pk)
+    except Post.DoesNotExist:
+        messages.error(request, "해당 게시글은 삭제되었습니다.")
+        return redirect('board:list')
     
     # 조회수 무조건 1 증가 (사용자 요청)
     post.view_count += 1

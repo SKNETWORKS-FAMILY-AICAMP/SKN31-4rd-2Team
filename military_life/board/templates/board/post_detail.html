@@ -131,28 +131,38 @@
 {% if post.author == request.user %}
 <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold" id="updateModalLabel">게시글 수정</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content" style="border-radius: 0.9rem; border: none; overflow: hidden;">
+            <div class="modal-header border-0"
+                style="background: linear-gradient(160deg, #2b3a26, #1d2b1a); color: #fff; padding: 1rem 1.25rem; display: flex !important; justify-content: space-between !important; align-items: flex-start !important; width: 100% !important;">
+                <div>
+                    <p style="margin: 0 0 .2rem; padding: 0; font-size: .8rem; line-height: 1.2;">&nbsp;</p>
+                    <h5 class="modal-title fw-bold" id="updateModalLabel"
+                        style="font-size: 1.1rem; line-height: 1.2; margin: 0;">게시글 수정</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"
+                    style="font-size: 0.8rem; padding: 0.5rem; margin: 0;"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 1rem 1.25rem 1.25rem;">
                 <form id="updatePostForm" data-url="{% url 'board:update' post.id %}">
                     {% csrf_token %}
-                    <!-- Note: For simplicity, category update is omitted in detail view. Can be added later. -->
+                    <!-- 카테고리 수정은 현재 뷰에서 생략되어 있음 -->
                     <div class="mb-3">
-                        <label for="update-title" class="form-label fw-bold">제목</label>
-                        <input type="text" class="form-control" style="background: var(--color-bg); font-size: 16px;"
+                        <label for="update-title" class="form-label fw-bold"
+                            style="font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">제목</label>
+                        <input type="text" class="form-control"
+                            style="background: #ffffff; border: 1px solid #dee2e6; border-radius: 0.5rem; padding: 0.6rem; font-size: 16px; box-shadow: none;"
                             id="update-title" name="title" value="{{ post.title }}" required>
                     </div>
                     <div class="mb-3">
-                        <label for="update-content" class="form-label fw-bold">내용</label>
-                        <textarea class="form-control" style="background: var(--color-bg); font-size: 16px;"
+                        <label for="update-content" class="form-label fw-bold"
+                            style="font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">내용</label>
+                        <textarea class="form-control"
+                            style="background: #ffffff; border: 1px solid #dee2e6; border-radius: 0.5rem; padding: 0.6rem; font-size: 16px; resize: vertical; min-height: 6rem; box-shadow: none;"
                             id="update-content" name="content" rows="6" required>{{ post.content }}</textarea>
                     </div>
-                    <div class="d-flex justify-content-end gap-2 mt-4">
-                        <button type="button" class="board-btn-secondary" data-bs-dismiss="modal">취소</button>
-                        <button type="submit" class="board-btn-primary">수정하기</button>
+                    <div class="d-flex justify-content-center mt-4">
+                        <button type="submit" class="btn btn-primary"
+                            style="background: #eef3e7; color: #2b3a26; border: 1px solid #2b3a26; padding: 0.6rem 3.5rem; border-radius: 0.55rem; font-weight: 600; font-size: 0.9rem;">수정하기</button>
                     </div>
                 </form>
             </div>
@@ -186,6 +196,7 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}

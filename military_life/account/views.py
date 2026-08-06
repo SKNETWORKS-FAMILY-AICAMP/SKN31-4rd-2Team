@@ -25,8 +25,6 @@ def login_view(request):
             login(request, user)
             next_url = request.POST.get('next') or reverse('home:home')
             return redirect(next_url)
-        else:
-            messages.error(request, "아이디 또는 비밀번호가 올바르지 않습니다.")
     else:
         form = LoginForm(request)
     return render(request, 'account/login.html', {'form': form})
