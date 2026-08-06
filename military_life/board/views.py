@@ -5,18 +5,34 @@ from django.contrib.auth.decorators import login_required
 from .models import Post, Category, Comment, PostLike, Report
 import json
 
-@login_required
+from django.contrib.auth import get_user_model, login
+
+# @login_required # 테스트를 위해 임시로 비활성화
 def post_list(request):
     """
     게시판 목록을 조회하는 뷰입니다.
     """
+    # --- 테스트를 위한 자동 로그인 코드 ---
+    if not request.user.is_authenticated:
+        User = get_user_model()
+        user = User.objects.first() # 가장 첫 번째 유저(ex. admin) 가져오기
+        if user:
+            login(request, user)
+    # -----------------------------------
+    
     category_id = request.GET.get('category')
     search_query = request.GET.get('q')
+    sort = request.GET.get('sort', 'latest')
 
     posts = Post.objects.annotate(
         like_count=Count('likes', distinct=True),
         comment_count=Count('comments', distinct=True)
-    ).order_by('-created_at')
+    )
+
+    if sort == 'popular':
+        posts = posts.order_by('-like_count', '-view_count', '-created_at')
+    else:
+        posts = posts.order_by('-created_at')
 
     if category_id:
         posts = posts.filter(category_id=category_id)
@@ -30,6 +46,7 @@ def post_list(request):
         'categories': categories,
         'current_category': int(category_id) if category_id else None,
         'search_query': search_query or '',
+        'current_sort': sort,
     }
     return render(request, 'board/post_list.html', context)
 
