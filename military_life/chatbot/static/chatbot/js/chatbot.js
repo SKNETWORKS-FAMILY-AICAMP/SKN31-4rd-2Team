@@ -147,7 +147,12 @@ function addHumanBubble(text, timeText = getCurrentTimeText()) {
 =========================================== */
 
 function renderSimpleMarkdown(element, text) {
-  const rawHtml = marked.parse(text ?? "", { breaks: true });
+  const source = (text ?? "")
+    .replace(/\r\n/g, "\n")
+    // 연속된 빈 줄 3개 이상은 2개(문단 구분 한 번)로 정리
+    .replace(/\n{3,}/g, "\n\n");
+
+  const rawHtml = marked.parse(source, { breaks: false });
   element.innerHTML = DOMPurify.sanitize(rawHtml);
 }
 
