@@ -142,50 +142,13 @@ function addHumanBubble(text, timeText = getCurrentTimeText()) {
 
 
 /* ==========================================
-   AI 답변의 간단한 마크다운 표시
-   #, ##, ### 헤딩과 **굵게**를 처리하며 HTML은 실행하지 않음
+   AI 답변의 마크다운 표시
+   marked.js로 파싱하고 DOMPurify로 살균한 뒤 삽입 (XSS 방지)
 =========================================== */
 
 function renderSimpleMarkdown(element, text) {
-  element.replaceChildren();
-  const source = text ?? "";
-  const lines = source.split("\n");
-
-  lines.forEach((line) => {
-    const headingMatch = line.match(/^(#{1,6})\s+(.*)$/);
-    if (headingMatch) {
-      const level = headingMatch[1].length;
-      const heading = document.createElement(`h${level}`);
-      appendInlineBold(heading, headingMatch[2]);
-      element.appendChild(heading);
-    } else if (line.trim() === "") {
-      element.appendChild(document.createElement("br"));
-    } else {
-      const p = document.createElement("p");
-      appendInlineBold(p, line);
-      element.appendChild(p);
-    }
-  });
-}
-
-function appendInlineBold(parent, text) {
-  const boldPattern = /\*\*(.+?)\*\*/gs;
-  let lastIndex = 0;
-  let match;
-
-  while ((match = boldPattern.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      parent.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
-    }
-    const strong = document.createElement("strong");
-    strong.textContent = match[1];
-    parent.appendChild(strong);
-    lastIndex = boldPattern.lastIndex;
-  }
-
-  if (lastIndex < text.length) {
-    parent.appendChild(document.createTextNode(text.slice(lastIndex)));
-  }
+  const rawHtml = marked.parse(text ?? "", { breaks: true });
+  element.innerHTML = DOMPurify.sanitize(rawHtml);
 }
 
 
