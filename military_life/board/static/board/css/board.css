@@ -1,5 +1,166 @@
 /* board/static/board/board.css */
 
+/* 공용 .page 위에 얹는 board 전용 폭 제한 (post_list.html 등에서 사용)
+   .page.board-page 로 묶어 우선순위를 .page보다 확실히 높여, CSS 로드 순서와 무관하게 항상 적용되게 함 */
+.page.board-page {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* ==========================================================
+   익명 글쓰기 모달 (#createModal)
+   개인 기록의 일정 기록 모달(#journal-modal, records.css)과
+   동일한 디자인 체계를 따르도록 구성. 부트스트랩 모달 컴포넌트
+   자체(열기/닫기 동작)는 그대로 쓰되, 시각 스타일은 전부 여기서 재정의.
+   ========================================================== */
+#createModal .modal-dialog {
+    max-width: 420px;
+}
+
+#createModal .modal-content {
+    border-radius: .9rem;
+    border: none;
+    overflow: hidden;
+}
+
+#createModal .modal-header {
+    background: linear-gradient(160deg, var(--color-dark-green), #1d2b1a);
+    color: #fff;
+    padding: 1rem 1.25rem;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+#createModal .modal-date {
+    margin: 0 0 .2rem;
+    padding: 0;
+    color: #cfd8bd;
+    font-size: .8rem;
+    line-height: 1.2;
+}
+
+#createModal .modal-title {
+    margin: 0;
+    padding: 0;
+    font-size: 1.1rem;
+    line-height: 1.2;
+}
+
+#createModal .modal-close {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.3rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+}
+
+#createModal .modal-body {
+    padding: 1rem 1.25rem 1.25rem;
+}
+
+#createModal .form-label {
+    display: block;
+    font-weight: 700;
+    font-size: .9rem;
+    margin: .8rem 0 .5rem;
+    padding: 0;
+}
+
+#createModal .form-label:first-of-type {
+    margin-top: 0;
+}
+
+#createModal .type-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin: 0;
+}
+
+#createModal .type-btn {
+    display: inline-block;
+    border: 1px solid var(--color-border);
+    background: #fff;
+    border-radius: .5rem;
+    padding: .45rem .75rem;
+    margin: 0;
+    cursor: pointer;
+    font-size: .85rem;
+    font-weight: 600;
+    color: #555;
+    transition: all .2s;
+}
+
+#createModal .type-btn:hover {
+    background: #f8f9fa;
+    border-color: #cccccc;
+    color: #333333;
+}
+
+#createModal .btn-check:checked + .type-btn {
+    border-color: var(--color-dark-green);
+    background: #eef3e7;
+    color: var(--color-dark-green);
+}
+
+#createModal input[type="text"],
+#createModal textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--color-border);
+    border-radius: .5rem;
+    padding: .6rem;
+    font-size: .95rem;
+    font-family: inherit;
+    background: #fff;
+}
+
+#createModal textarea {
+    min-height: 6rem;
+    resize: vertical;
+}
+
+#createModal .anon-notice {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: #fdf8e2;
+    color: #8a6d3b;
+    border-radius: .5rem;
+    padding: .6rem .8rem;
+    font-size: .85rem;
+    margin-top: .8rem;
+}
+
+#createModal .modal-actions {
+    margin-top: .8rem;
+}
+
+#createModal .btn-primary {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .6rem;
+    margin: 0;
+    border-radius: .55rem;
+    font-weight: 600;
+    font-size: .9rem;
+    cursor: pointer;
+    border: 1px solid var(--color-dark-green);
+    background: #eef3e7;
+    color: var(--color-dark-green);
+}
+
+#createModal .btn-primary:hover {
+    background: #e2f0d9;
+}
+
 .search-box {
     width: 100%;
     padding: 16px 20px;

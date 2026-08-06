@@ -4,15 +4,15 @@
 {% block title %}회원 정보 수정 - 진격의 박병장{% endblock %}
 
 {% block content %}
-<div class="page-header d-flex align-items-center position-relative mb-4" style="max-width: 640px; margin: 0 auto;">
+<div class="page-header page-header--sm d-flex align-items-center position-relative" style="max-width: 480px; margin: 0 auto;">
     <a href="{% url 'home:home' %}" class="page-back position-absolute start-0 top-0"><i class="bi bi-chevron-left"></i></a>
     <div class="w-100 text-center">
-        <h1>회원 정보 수정</h1>
+        <h3>회원 정보 수정</h3>
         <p>개인 정보를 수정할 수 있습니다</p>
     </div>
 </div>
 
-<div class="settings-card">
+<div class="settings-card settings-card--compact">
     <div class="settings-card__header">
         <div class="d-flex align-items-center gap-2">
             <span class="rank-badge {% if profile.status == '병사' %}rank-badge--enlisted{% else %}rank-badge--officer{% endif %}">{{ profile.rank }}</span>
@@ -107,15 +107,15 @@
         <button type="submit" form="update-form" class="btn-primary">
             <i class="bi bi-pencil"></i> 수정
         </button>
-        <form method="post" action="{% url 'account:delete' %}"
-              onsubmit="return confirm('정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');"
-              style="flex:1;">
-            {% csrf_token %}
-            <button type="submit" class="btn-danger" style="width:100%;">
-                <i class="bi bi-trash"></i> 탈퇴
-            </button>
-        </form>
+        <button type="submit" form="delete-form" class="btn-danger">
+            <i class="bi bi-trash"></i> 탈퇴
+        </button>
     </div>
+
+    <form method="post" action="{% url 'account:delete' %}" id="delete-form"
+          onsubmit="return confirm('정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');" hidden>
+        {% csrf_token %}
+    </form>
 </div>
 
 <script>

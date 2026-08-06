@@ -5,16 +5,16 @@
 {% block nav_board_active %}active{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'board/css/board.css' %}?v=5">
+<link rel="stylesheet" href="{% static 'board/css/board.css' %}?v=7">
 {% endblock %}
 
 {% block content %}
-<div class="page" style="max-width: 800px; margin: 0 auto;">
+<div class="page board-page">
     <!-- 게시판 헤더 -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="page-header d-flex justify-content-between align-items-start flex-wrap">
         <div>
             <h1 class="h3 fw-bold mb-1">익명 게시판</h1>
-            <p class="text-muted mb-0 small">자유롭게 정보를 공유해요</p>
+            <p>자유롭게 정보를 공유해요</p>
         </div>
         <button class="board-btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
             <i class="bi bi-plus-lg"></i> 글쓰기
@@ -125,90 +125,52 @@
     </div>
 </div>
 
-<!-- 글쓰기 모달 -->
+<!-- 글쓰기 모달 (개인 기록의 일정 기록 모달과 동일한 스타일 체계 사용) -->
 <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 0.9rem; border: none; overflow: hidden;">
-            <div class="modal-header border-0"
-                style="background: linear-gradient(160deg, #2b3a26, #1d2b1a); color: #fff; padding: 1rem 1.25rem; display: flex !important; justify-content: space-between !important; align-items: flex-start !important; width: 100% !important;">
+        <div class="modal-content">
+            <div class="modal-header border-0">
                 <div>
-                    <p style="margin: 0 0 .2rem; padding: 0; font-size: .8rem; line-height: 1.2;">&nbsp;</p>
-                    <h5 class="modal-title fw-bold" id="createModalLabel"
-                        style="font-size: 1.1rem; line-height: 1.2; margin: 0;">익명 글쓰기</h5>
+                    <p class="modal-date">{% now "Y-m-d" %}</p>
+                    <h5 class="modal-title fw-bold" id="createModalLabel">익명 글쓰기</h5>
                 </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"
-                    style="font-size: 0.8rem; padding: 0.5rem; margin: 0;"></button>
+                <button type="button" class="modal-close" data-bs-dismiss="modal" aria-label="닫기">&times;</button>
             </div>
-            <div class="modal-body" style="padding: 1rem 1.25rem 1.25rem;">
+            <div class="modal-body">
                 <form id="createPostForm" data-url="{% url 'board:create' %}">
                     {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label fw-bold"
-                            style="font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">카테고리</label>
-                        <style>
-                            .btn-check:checked+.board-btn-check-label {
-                                background-color: #eef3e7 !important;
-                                color: #2b3a26 !important;
-                                border-color: #2b3a26 !important;
-                            }
+                    <label class="form-label">카테고리</label>
+                    <div class="type-select">
+                        <input type="radio" class="btn-check" name="category" id="cat_휴가" value="휴가" required>
+                        <label class="type-btn" for="cat_휴가">휴가</label>
 
-                            .board-btn-check-label {
-                                background-color: #ffffff;
-                                color: #555555;
-                                border: 1px solid #dee2e6;
-                                border-radius: 0.5rem;
-                                padding: 0.45rem 0.75rem;
-                                font-size: 0.9rem;
-                                font-weight: 600;
-                                transition: all 0.2s;
-                            }
+                        <input type="radio" class="btn-check" name="category" id="cat_징계" value="징계" required>
+                        <label class="type-btn" for="cat_징계">징계</label>
 
-                            .board-btn-check-label:hover {
-                                background-color: #f8f9fa;
-                                border-color: #cccccc;
-                                color: #333333;
-                            }
-                        </style>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <input type="radio" class="btn-check" name="category" id="cat_휴가" value="휴가" required>
-                            <label class="btn board-btn-check-label px-3" for="cat_휴가">휴가</label>
+                        <input type="radio" class="btn-check" name="category" id="cat_급여" value="급여" required>
+                        <label class="type-btn" for="cat_급여">급여</label>
 
-                            <input type="radio" class="btn-check" name="category" id="cat_징계" value="징계" required>
-                            <label class="btn board-btn-check-label px-3" for="cat_징계">징계</label>
+                        <input type="radio" class="btn-check" name="category" id="cat_전역" value="전역" required>
+                        <label class="type-btn" for="cat_전역">전역</label>
 
-                            <input type="radio" class="btn-check" name="category" id="cat_급여" value="급여" required>
-                            <label class="btn board-btn-check-label px-3" for="cat_급여">급여</label>
-
-                            <input type="radio" class="btn-check" name="category" id="cat_전역" value="전역" required>
-                            <label class="btn board-btn-check-label px-3" for="cat_전역">전역</label>
-
-                            <input type="radio" class="btn-check" name="category" id="cat_병영생활" value="병영생활" required>
-                            <label class="btn board-btn-check-label px-3" for="cat_병영생활">병영생활</label>
-                        </div>
+                        <input type="radio" class="btn-check" name="category" id="cat_병영생활" value="병영생활" required>
+                        <label class="type-btn" for="cat_병영생활">병영생활</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="title" class="form-label fw-bold"
-                            style="font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">제목</label>
-                        <input type="text" class="form-control"
-                            style="background: #ffffff; border: 1px solid #dee2e6; border-radius: 0.5rem; padding: 0.6rem; font-size: 16px; box-shadow: none;"
-                            id="title" name="title" placeholder="제목을 입력해 주세요" required>
+
+                    <label for="title" class="form-label">제목</label>
+                    <input type="text" id="title" name="title" placeholder="제목을 입력해 주세요" required>
+
+                    <label for="content" class="form-label">내용</label>
+                    <textarea id="content" name="content" rows="6"
+                        placeholder="고민이나 질문을 자유롭게 작성해 주세요. 완전한 익명으로 처리됩니다." required></textarea>
+
+                    <div class="anon-notice">
+                        <i class="bi bi-lock-fill"></i>
+                        <span>작성자 정보는 완전히 익명으로 처리됩니다.</span>
                     </div>
-                    <div class="mb-3">
-                        <label for="content" class="form-label fw-bold"
-                            style="font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">내용</label>
-                        <textarea class="form-control"
-                            style="background: #ffffff; border: 1px solid #dee2e6; border-radius: 0.5rem; padding: 0.6rem; font-size: 16px; resize: vertical; min-height: 6rem; box-shadow: none;"
-                            id="content" name="content" rows="6" placeholder="고민이나 질문을 자유롭게 작성해 주세요. 완전한 익명으로 처리됩니다."
-                            required></textarea>
-                    </div>
-                    <div class="alert alert-warning d-flex align-items-center py-2 border-0" role="alert"
-                        style="background: #fdf8e2; color: #8a6d3b; border-radius: 0.5rem;">
-                        <i class="bi bi-lock-fill me-2"></i>
-                        <small>작성자 정보는 완전히 익명으로 처리됩니다.</small>
-                    </div>
-                    <div class="d-flex justify-content-center mt-4">
-                        <button type="submit" class="btn btn-primary"
-                            style="background: #eef3e7; color: #2b3a26; border: 1px solid #2b3a26; padding: 0.6rem 3.5rem; border-radius: 0.55rem; font-weight: 600; font-size: 0.9rem;">게시하기</button>
+
+                    <div class="modal-actions">
+                        <button type="submit" class="btn-primary">게시하기</button>
                     </div>
                 </form>
             </div>

@@ -10,33 +10,14 @@
     --rg-muted: #8a8a7a;
 }
 
-.records-page {
+.page.records-page {
     max-width: 820px;
     margin: 0 auto;
     color: #2b2b23;
     font-size: 1rem;
 }
 
-/* 헤더 */
-.records-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: .6rem;
-    margin-bottom: 1.1rem;
-}
-
-.records-header h1 {
-    margin: 0 0 .2rem;
-    font-size: 1.5rem;
-}
-
-.records-subtitle {
-    color: var(--rg-muted);
-    margin: 0;
-    font-size: .9rem;
-}
+/* 헤더: 공용 common.css의 .page-header 사용 (여기서는 별도 정의 없음) */
 
 /* 탭 메뉴 */
 .records-tabs {

@@ -159,17 +159,31 @@ a { text-decoration: none; color: inherit; }
 .page {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 32px 24px 80px;
+    padding: 20px 24px 80px;
 }
  
 .page-header h1 {
     margin: 0 0 4px;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
 }
  
 .page-header p {
-    margin: 0 0 24px;
+    margin: 0 0 16px;
     color: var(--color-text-muted);
+}
+
+/* 회원 정보 수정 / 내가 쓴 게시글 타이틀 */
+.page-header--sm {
+    margin-bottom: 12px;
+}
+.page-header--sm h1,
+.page-header--sm h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 6px;
+}
+.page-header--sm p {
+    margin: 0 0 14px;
 }
 
 .page-back {
@@ -615,6 +629,48 @@ a { text-decoration: none; color: inherit; }
 
 .settings-card__footer .btn-danger:hover {
     background: #fde2e2;
+}
+
+/* --- 카드 전체 크기 축소 버전 (account:update) --- */
+.settings-card--compact {
+    max-width: 480px;
+}
+.settings-card--compact .settings-card__header {
+    padding: 14px 20px;
+}
+.settings-card--compact .settings-card__body {
+    padding: 20px 20px 4px;
+}
+.settings-card--compact .settings-card__footer {
+    padding: 0 20px 20px;
+}
+.settings-card--compact .form-field {
+    margin-bottom: 14px;
+}
+.settings-card--compact .form-field input[type="text"],
+.settings-card--compact .form-field input[type="password"],
+.settings-card--compact .form-field input[type="email"],
+.settings-card--compact .form-field input[type="date"] {
+    padding: 10px 14px;
+}
+.settings-card--compact .identity-select {
+    gap: 8px;
+}
+.settings-card--compact .identity-option {
+    padding: 12px 10px;
+    gap: 6px;
+}
+.settings-card--compact .identity-option__icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+}
+.settings-card--compact .rank-option {
+    padding: 8px 2px;
+    font-size: 0.75rem;
+}
+.settings-card--compact .rank-group {
+    margin-bottom: 12px;
 }
 
 .my-post-card {
