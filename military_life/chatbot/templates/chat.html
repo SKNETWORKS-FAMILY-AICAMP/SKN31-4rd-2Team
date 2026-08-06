@@ -303,5 +303,9 @@
 }
 </script>
 
-<script src="{% static 'chatbot/js/chatbot.js' %}?v=1"></script>
+<!-- 마크다운 파싱 + HTML 살균 (XSS 방지) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+
+<script src="{% static 'chatbot/js/chatbot.js' %}?v=2"></script>
 {% endblock %}
