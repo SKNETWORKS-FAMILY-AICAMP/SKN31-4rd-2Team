@@ -560,22 +560,24 @@ body:has(.chat-layout) {
   width: 100%;
   padding: 18px 20px;
   color: #171a15;
-  background:
-    rgba(255, 255, 255, 0.96);
-  border:
-    1px solid
-    rgba(70, 76, 62, 0.22);
-  border-radius:
-    5px 20px 20px 20px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(70, 76, 62, 0.22);
+  border-radius: 5px 20px 20px 20px;
   box-shadow:
-    0 2px 5px
-    rgba(20, 28, 17, 0.13),
-    0 7px 16px
-    rgba(20, 28, 17, 0.08);
+    0 2px 5px rgba(20, 28, 17, 0.13),
+    0 7px 16px rgba(20, 28, 17, 0.08);
   font-size: 16px;
   line-height: 1.65;
-  backdrop-filter:
-    blur(2px);
+  backdrop-filter: blur(2px);
+  white-space: normal;        /* 추가 */
+}
+
+.bubble.ai p {
+  margin: 0 0 0.6em;
+}
+
+.bubble.ai p:last-child {
+  margin-bottom: 0;
 }
 
 .bubble.ai strong {
