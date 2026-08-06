@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from .models import Post, Category, Comment, PostLike, Report
 import json
 
@@ -35,8 +36,14 @@ def post_list(request):
     if search_query:
         posts = posts.filter(Q(title__icontains=search_query) | Q(content__icontains=search_query))
 
+    # 페이징 처리 (한 페이지당 10개)
+    page_number = request.GET.get('page')
+    paginator = Paginator(posts, 10)
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'posts': posts,
+        'posts': page_obj,
+        'page_obj': page_obj,
         'categories': DEFAULT_CATEGORIES,
         'current_category': category_name,
         'search_query': search_query or '',
