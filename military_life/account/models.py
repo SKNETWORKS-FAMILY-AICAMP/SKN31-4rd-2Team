@@ -10,7 +10,7 @@ class Profile(models.Model):
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.ENLISTED) # 신분(병사/간부) - 회원가입 화면 반영
     rank = models.CharField(max_length=20) # 계급
     enlist_date = models.DateField() # 입대일
-    discharge_date = models.DateField() # 전역(예정)일
+    discharge_date = models.DateField(null=True, blank=True) # 전역(예정)일
  
     def __str__(self):
         return f"{self.user} ({self.status}/{self.rank})"

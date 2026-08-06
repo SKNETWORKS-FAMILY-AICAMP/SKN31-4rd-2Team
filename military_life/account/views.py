@@ -6,10 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from dateutil.relativedelta import relativedelta
 
 from .forms import (
-    ENLISTED_SERVICE_DAYS,
-    OFFICER_SERVICE_DAYS,
+    ENLISTED_SERVICE_MONTHS,
     LoginForm,
     ProfileUpdateForm,
     SignUpForm,
@@ -68,10 +68,11 @@ def profile_update_view(request):
             profile.rank = (
                 form.cleaned_data.get('rank') if new_is_enlisted else form.cleaned_data.get('officer_rank')
             )
-
-            # 신분이 바뀌면 복무기간 기준(병사/간부)도 달라지므로 전역(예정)일을 다시 계산합니다.
-            service_days = ENLISTED_SERVICE_DAYS if new_is_enlisted else OFFICER_SERVICE_DAYS
-            profile.discharge_date = profile.enlist_date + timedelta(days=service_days)
+            # 병사로 바뀌면 전역일 재계산, 간부로 바뀌면 값 비움
+            if new_is_enlisted:
+                profile.discharge_date = profile.enlist_date + relativedelta(months=ENLISTED_SERVICE_MONTHS) - timedelta(days=1)
+            else:
+                profile.discharge_date = None
 
             profile.save()
 

@@ -20,20 +20,28 @@
 	</div>
 
 	<div class="hero__dday-card">
-		<div class="hero__dday-header">
-			<span>전역까지</span>
-			<span class="hero__dday-badge">{% if ddays is not None %}D-{{ ddays }}{% else %}D-47{% endif %}</span>
-		</div>
-		<div class="hero__dday-value">D-<strong>{% if ddays is not None %}{{ ddays }}{% else %}47{% endif %}</strong></div>
-		<div class="hero__dday-sub">전역 예정일: {% if discharge_date %}{{ discharge_date|date:'Y년 n월 j일' }}{% else %}예정일 미등록{% endif %}</div>
-		<div class="progress-bar">
-			<div class="progress-bar__fill" style="width: {{ progress_percent }}%;"></div>
-		</div>
-		<div class="progress-bar__labels">
-			<span>입대</span>
-			<span class="percent">{{ progress_percent }}%</span>
-			<span>전역</span>
-		</div>
+		{% if is_officer_without_dday %}
+			<div class="hero__dday-header">
+				<span>전역까지</span>
+			</div>
+			<div class="hero__dday-value" style="font-size: 1.1rem;">전역일 미계산</div>
+			<div class="hero__dday-sub">간부는 임관 경로·연장복무 여부에 따라 복무기간이 달라, 전역일이 자동으로 계산되지 않습니다.</div>
+		{% else %}
+			<div class="hero__dday-header">
+				<span>전역까지</span>
+				<span class="hero__dday-badge">{{ dday_label|default:"D-47" }}</span>
+			</div>
+			<div class="hero__dday-value"><strong>{{ dday_label|default:"D-47" }}</strong></div>
+			<div class="hero__dday-sub">전역 예정일: {% if discharge_date %}{{ discharge_date|date:'Y년 n월 j일' }}{% else %}예정일 미등록{% endif %}</div>
+			<div class="progress-bar">
+				<div class="progress-bar__fill" style="width: {{ progress_percent }}%;"></div>
+			</div>
+			<div class="progress-bar__labels">
+				<span>입대</span>
+				<span class="percent">{{ progress_percent }}%</span>
+				<span>전역</span>
+			</div>
+		{% endif %}
 	</div>
 </section>
 

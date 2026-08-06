@@ -3,7 +3,7 @@ from datetime import timedelta
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import get_user_model
-
+from dateutil.relativedelta import relativedelta
 from .models import Profile
 
 ENLISTED_RANK_CHOICES = [
@@ -33,8 +33,7 @@ OFFICER_RANK_CHOICES = [
 
 # TODO: 전역(예정)일 계산 기준(복무기간)은 실제 정책/군종에 맞게 조정 필요.
 # 현재: 병사 18개월(548일), 간부 임시로 36개월(1095일) 기준.
-ENLISTED_SERVICE_DAYS = 548
-OFFICER_SERVICE_DAYS = 1095
+ENLISTED_SERVICE_MONTHS = 18  # 육군/해병 기준
 
 class LoginForm(AuthenticationForm):
     """디자인 시안(플레이스홀더 문구)에 맞춘 로그인 폼"""
@@ -59,6 +58,13 @@ class SignUpForm(UserCreationForm):
         label='입대일',
         widget=forms.DateInput(attrs={'type': 'date'}),
     )
+
+    officer_discharge_date = forms.DateField(
+    label='전역(예정)일',
+    required=False,
+    widget=forms.DateInput(attrs={'type': 'date'}),
+    )
+
     status = forms.ChoiceField(
         label='신분',
         choices=Profile.Status.choices,
@@ -114,10 +120,11 @@ class SignUpForm(UserCreationForm):
                 if status == Profile.Status.ENLISTED
                 else self.cleaned_data.get('officer_rank')
             )
-            service_days = (
-                ENLISTED_SERVICE_DAYS if status == Profile.Status.ENLISTED else OFFICER_SERVICE_DAYS
-            )
-            discharge_date = enlist_date + timedelta(days=service_days)
+
+            if status == Profile.Status.ENLISTED:
+                discharge_date = enlist_date + relativedelta(months=ENLISTED_SERVICE_MONTHS) - timedelta(days=1)
+            else:
+                discharge_date = self.cleaned_data.get('officer_discharge_date')
 
             Profile.objects.create(
                 user=user,
