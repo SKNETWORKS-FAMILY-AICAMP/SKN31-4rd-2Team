@@ -5,7 +5,7 @@
 :root {
     --color-dark-green: #2b3a26;   /* 네비게이션 바 배경 */
     --color-olive: #3f5233;        /* 히어로 카드 배경 */
-    --color-primary: #6fa645;      /* 포인트 그린(버튼, 진행바) */
+    --color-primary: #6B8E4E;      /* 포인트 그린 */
     --color-primary-light: #e7f0df;
     --color-bg: #f2f1ec;           /* 전체 배경(베이지) */
     --color-card: #ffffff;
@@ -14,6 +14,7 @@
     --color-border: #e2e0d8;
     --color-officer: #6b4a2f;       /* 간부 테마 강조색 */
     --color-officer-light: #faf3e3;
+    --color-badge-enlisted: #a4d65e; /* 병사 신분 배지 색상 */
     --radius-md: 12px;
     --radius-lg: 20px;
 }
@@ -31,12 +32,12 @@ a { text-decoration: none; color: inherit; }
  
 /* ---------------- Navbar ---------------- */
 .navbar {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
     background: var(--color-dark-green);
     color: #fff;
-    padding: 14px 32px;
+    padding: 10px 32px;
 }
  
 .navbar__brand {
@@ -45,11 +46,13 @@ a { text-decoration: none; color: inherit; }
     gap: 8px;
     font-weight: 700;
     font-size: 1.1rem;
+    justify-self: start;
 }
  
 .navbar__menu {
     display: flex;
     gap: 8px;
+    justify-self: center;
 }
  
 .navbar__item {
@@ -72,6 +75,7 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     align-items: center;
     gap: 12px;
+    justify-self: end;
 }
  
 .rank-badge {
@@ -80,8 +84,18 @@ a { text-decoration: none; color: inherit; }
     font-size: 0.75rem;
     font-weight: 700;
     padding: 5px 12px;
-    border-radius: 999px;
+    border-radius: 12px;
     white-space: nowrap;
+}
+
+/* 신분(병사/간부)별 배지 색상 */
+.rank-badge--enlisted {
+    background: var(--color-badge-enlisted);
+    color: var(--color-dark-green);
+}
+.rank-badge--officer {
+    background: var(--color-officer);
+    color: #fff;
 }
  
 .navbar__username {
@@ -215,6 +229,45 @@ a { text-decoration: none; color: inherit; }
 .btn-danger-outline:hover {
     background: #fbe4e4;
 }
+
+/* '탈퇴'처럼 수정(btn-primary)과 같은 무게감(꽉 찬 배경)을 유지하되
+   위험한 액션임을 색으로 구분하고 싶을 때 사용 */
+.btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 22px;
+    border-radius: var(--radius-md);
+    border: none;
+    background: #c0392b;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background: #a5301f;
+}
+
+/* '수정' 버튼처럼 주요 액션이지만 outline 스타일이 필요할 때 사용 */
+.btn-primary-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 22px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-primary);
+    background: var(--color-primary-light);
+    color: var(--color-dark-green);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-primary-outline:hover {
+    background: #d9e6c9;
+}
  
 /* ---------------- Tabs (records / chatbot 사이드바 등 공용 컴포넌트) ---------------- */
 .tabs {
@@ -240,65 +293,7 @@ a { text-decoration: none; color: inherit; }
  
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
- 
-/* ---------------- Modal ---------------- */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-}
-.modal-overlay.active { display: flex; }
- 
-.modal-box {
-    background: #fff;
-    width: 90%;
-    max-width: 640px;
-    border-radius: var(--radius-lg);
-    padding: 28px;
-    max-height: 90vh;
-    overflow-y: auto;
-}
- 
-.modal-box__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 16px;
-}
- 
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; font-weight: 600; margin-bottom: 8px; }
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    padding: 14px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: var(--color-bg);
-    font-family: inherit;
-}
-.form-group textarea { min-height: 140px; resize: vertical; }
- 
-.notice-box {
-    background: var(--color-bg);
-    border-radius: var(--radius-md);
-    padding: 12px 16px;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    margin-bottom: 20px;
-}
- 
-.modal-box__footer {
-    display: flex;
-    gap: 12px;
-}
-.modal-box__footer .btn-primary { flex: 1; justify-content: center; }
+
 
 /* ==========================================================
    로그인 / 회원가입 (account:login, account:signup)
@@ -364,25 +359,13 @@ a { text-decoration: none; color: inherit; }
     text-align: center;
     padding: 18px;
     font-weight: 700;
-    color: var(--color-text-muted);
-    background: #fff;
+    background: var(--color-dark-green);
+    color: #b9c4ad;
 }
 
 .auth-tabs__item.active {
-    background: var(--color-dark-green);
-    color: #fff;
-}
-
-.auth-tabs__item:first-child.active {
-    border: 7px solid #ffffff;
-    border-top-left-radius: 16px;
-    margin: -1px 0 0 -1px;
-}
-
-.auth-tabs__item:last-child.active {
-    border: 7px solid #ffffff;
-    border-top-right-radius: 16px;
-    margin: -1px -1px 0 0;
+    background: #fff;
+    color: var(--color-dark-green);
 }
 
 .auth-body {
@@ -603,10 +586,35 @@ a { text-decoration: none; color: inherit; }
 }
 
 .settings-card__footer .btn-primary,
+.settings-card__footer .btn-primary-outline,
+.settings-card__footer .btn-danger,
 .settings-card__footer .btn-danger-outline {
     flex: 1;
     justify-content: center;
     text-align: center;
+}
+
+/* --- 수정 / 탈퇴 버튼--- */
+.settings-card__footer .btn-primary {
+    background: #eef7e8;
+    color: var(--color-olive); /* #3f5233 */
+    border: 1px solid #cce3be;
+    font-weight: 700;
+}
+
+.settings-card__footer .btn-primary:hover {
+    background: #e2f0d9;
+}
+
+.settings-card__footer .btn-danger {
+    background: #fff0f0;
+    color: #c0392b;
+    border: 1px solid #f2c4c4;
+    font-weight: 700;
+}
+
+.settings-card__footer .btn-danger:hover {
+    background: #fde2e2;
 }
 
 .my-post-card {

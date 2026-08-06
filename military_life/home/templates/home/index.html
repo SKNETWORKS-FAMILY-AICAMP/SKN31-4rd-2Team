@@ -3,70 +3,73 @@
 
 {% block title %}진격의 박병장{% endblock %}
 
-{% block content %}
-<section class="hero p-5" style="background: linear-gradient(135deg,#274724 0%, #2f4d24 60%); color:#fff; border-radius:12px;">
-	<div class="container d-flex align-items-center justify-content-between">
-		<div style="max-width:720px">
-			<h1 class="display-6 fw-bold">군 생활, 혼자 고민하지 마세요</h1>
-			<p class="lead mt-3">박병장이 군인복무기본법, 군인사법 등 관련 규정을 쉽고 정확하게 알려드립니다.</p>
-			<a href="{% url 'chatbot:chat' %}" class="btn btn-light btn-lg mt-3">박병장한테 물어보기</a>
-		</div>
+{% block nav_home_active %}active{% endblock %}
 
-		<div style="min-width:240px;">
-			<div class="card text-dark" style="background:rgba(255,255,255,0.85); border:none;">
-				<div class="card-body">
-					<h6 class="card-subtitle">전역까지</h6>
-					<h2 class="fw-bold">{% if ddays is not None %}D-{{ ddays }}{% else %}D-47{% endif %}</h2>
-					<p class="small mb-0">전역 예정일: {% if discharge_date %}{{ discharge_date|date:'Y년 n월 j일' }}{% else %}예정일 미등록{% endif %}</p>
-					<div class="progress mt-3" style="height:10px; background:rgba(255,255,255,0.12)">
-						<div class="progress-bar bg-success" role="progressbar" style="width:{{ progress_percent }}%"></div>
-					</div>
-				</div>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'home/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="hero section-container">
+	<div class="hero__content">
+		<h1 class="hero__title">군 생활, 혼자 고민하지마세요</h1>
+		<p class="hero__desc">박병장이 군인복무기본법, 군인사법 등 관련 규정을 쉽고 정확하게 알려드릴게요.</p>
+		<a href="{% url 'chatbot:chat' %}" class="hero__cta">
+			<i class="bi bi-chat-dots-fill" aria-hidden="true"></i> 박병장에게 물어보기
+		</a>
+	</div>
+
+	<div class="hero__dday-card">
+		<div class="hero__dday-header">
+			<span>전역까지</span>
+			<span class="hero__dday-badge">{% if ddays is not None %}D-{{ ddays }}{% else %}D-47{% endif %}</span>
+		</div>
+		<div class="hero__dday-value">D-<strong>{% if ddays is not None %}{{ ddays }}{% else %}47{% endif %}</strong></div>
+		<div class="hero__dday-sub">전역 예정일: {% if discharge_date %}{{ discharge_date|date:'Y년 n월 j일' }}{% else %}예정일 미등록{% endif %}</div>
+		<div class="progress-bar">
+			<div class="progress-bar__fill" style="width: {{ progress_percent }}%;"></div>
+		</div>
+		<div class="progress-bar__labels">
+			<span>입대</span>
+			<span class="percent">{{ progress_percent }}%</span>
+			<span>전역</span>
+		</div>
+	</div>
+</section>
+
+<section class="section-container my-5">
+	<h5 class="mb-2 fw-bold">서비스 안내</h5>
+	<div class="service-grid">
+		<a href="{% url 'chatbot:chat' %}" class="service-card text-decoration-none text-reset">
+			<div class="service-card__icon"><i class="bi bi-chat-left-text-fill"></i></div>
+			<h6 class="fw-bold">AI 챗봇 상담</h6>
+			<p class="small text-muted mb-0">박병장과 함께 군 규정 & 병영생활 정보를 쉽게 확인하세요.</p>
+		</a>
+		<a href="{% url 'records:records' %}" class="service-card text-decoration-none text-reset">
+			<div class="service-card__icon service-card__icon--accent"><i class="bi bi-book-fill"></i></div>
+			<h6 class="fw-bold">개인 기록</h6>
+			<p class="small text-muted mb-0">전역 D-day, 목표 관리, 캘린더 일지로 군 생활을 기록하세요.</p>
+		</a>
+		<a href="{% url 'board:list' %}" class="service-card text-decoration-none text-reset">
+			<div class="service-card__icon"><i class="bi bi-people-fill"></i></div>
+			<h6 class="fw-bold">익명 게시판</h6>
+			<p class="small text-muted mb-0">같은 상황의 동료들과 정보를 나누고 고민을 익명으로 공유하세요.</p>
+		</a>
+	</div>
+</section>
+
+<section class="section-container my-2">
+	<div class="emergency-alert">
+		<div class="emergency-alert__content">
+			<div class="emergency-alert__icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+			<div>
+				<div class="emergency-alert__title">긴급 신고 · 국방헬프콜</div>
+				<div class="emergency-alert__text">부조리·인권침해·성폭력은 챗봇 답변보다 <strong>실제 신고가 우선</strong>입니다. 본 서비스의 답변은 참고용이며 법률 자문이 아닙니다.</div>
 			</div>
 		</div>
-	</div>
-</section>
-
-<section class="container my-5">
-	<h5 class="mb-4">서비스 안내</h5>
-	<div class="row g-3">
-		<div class="col-md-4">
-			<a href="{% url 'chatbot:chat' %}" class="card h-100 text-decoration-none text-reset">
-				<div class="card-body">
-					<div class="mb-3" style="font-size:24px">💬</div>
-					<h6>AI 챗봇 상담</h6>
-					<p class="small">박병장과 함께 군 규정 & 병영생활 정보를 쉽게 확인하세요.</p>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-4">
-			<a href="{% url 'records:records' %}" class="card h-100 text-decoration-none text-reset">
-				<div class="card-body">
-					<div class="mb-3" style="font-size:24px">📖</div>
-					<h6>개인 기록</h6>
-					<p class="small">전역 D-day, 목표 관리, 캘린더 일지로 군 생활을 기록하세요.</p>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-4">
-			<a href="{% url 'board:list' %}" class="card h-100 text-decoration-none text-reset">
-				<div class="card-body">
-					<div class="mb-3" style="font-size:24px">👥</div>
-					<h6>익명 게시판</h6>
-					<p class="small">같은 상황의 동료들과 정보를 나누고 고민을 익명으로 공유하세요.</p>
-				</div>
-			</a>
-		</div>
-	</div>
-</section>
-
-<section class="container my-4">
-	<div class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">
-		<div>
-			<strong>긴급 신고 · 국번없이</strong>
-			<div class="small">부조리·인권침해·성폭력은 실체 신고가 우선입니다. 본 서비스의 답변은 참고용입니다.</div>
-		</div>
-		<a class="btn btn-danger" href="tel:1303">1303</a>
+		<a class="emergency-alert__cta" href="tel:1303">
+			<i class="bi bi-telephone-fill"></i> 1303
+		</a>
 	</div>
 </section>
 

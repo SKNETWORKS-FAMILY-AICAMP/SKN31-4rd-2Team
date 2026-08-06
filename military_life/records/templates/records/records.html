@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block title %}개인 기록 - 진격의 박병장{% endblock %}
+
 {% block nav_records_active %}active{% endblock %}
 
 {% block extra_css %}
@@ -13,12 +14,9 @@
 
     <div class="records-header">
         <div>
-            <h2>📖 개인 기록</h2>
-            <p class="records-subtitle">나만의 군 생활 기록을 관리하세요</p>
+            <h1 class="h3 fw-bold mb-1">개인 기록</h1>
+            <p class="records-subtitle">나만의 군 생활 기록을 관리해요</p>
         </div>
-        {% if request.user.profile.status %}
-        <span class="badge-rank">{{ request.user.profile.status }}</span>
-        {% endif %}
     </div>
 
     {% if messages %}

@@ -6,8 +6,6 @@ from django.contrib.auth import get_user_model
 
 from .models import Profile
 
-# Profile.rank는 모델에 choices가 없는 자유 입력 CharField라서,
-# 계급 버튼 목록은 여기서만 정의합니다.
 ENLISTED_RANK_CHOICES = [
     ('이병', '이병'),
     ('일병', '일병'),
@@ -15,7 +13,6 @@ ENLISTED_RANK_CHOICES = [
     ('병장', '병장'),
 ]
 
-# 간부 계급은 부사관/장교 그룹으로 나눠서 버튼으로 선택합니다.
 OFFICER_RANK_CHOICES = [
     ('부사관', [
         ('하사', '하사'),
@@ -133,7 +130,7 @@ class SignUpForm(UserCreationForm):
 
 
 class ProfileUpdateForm(forms.Form):
-    """회원 정보 수정 폼. 아이디/신분(status)은 변경 불가(화면에 표시만), 계급(rank)만 수정 가능."""
+    """회원 정보 수정 폼. 아이디는 변경 불가(화면에 표시만), 신분/계급은 수정 가능."""
     new_password1 = forms.CharField(
         label='새 비밀번호',
         required=False,
@@ -143,6 +140,11 @@ class ProfileUpdateForm(forms.Form):
         label='비밀번호 확인',
         required=False,
         widget=forms.PasswordInput(attrs={'placeholder': '비밀번호 재입력'}),
+    )
+    status = forms.ChoiceField(
+        label='신분',
+        choices=Profile.Status.choices,
+        widget=forms.RadioSelect,
     )
     rank = forms.ChoiceField(
         label='계급',
@@ -171,10 +173,11 @@ class ProfileUpdateForm(forms.Form):
             if len(pw1) < 8:
                 raise forms.ValidationError('비밀번호는 8자 이상이어야 합니다.')
 
-        if self.profile and self.profile.status == Profile.Status.ENLISTED:
+        status = cleaned_data.get('status')
+        if status == Profile.Status.ENLISTED:
             if not cleaned_data.get('rank'):
                 self.add_error('rank', '계급을 선택해 주세요.')
-        else:
+        elif status == Profile.Status.OFFICER:
             if not cleaned_data.get('officer_rank'):
-                self.add_error('officer_rank', '계급을 입력해 주세요.')
+                self.add_error('officer_rank', '계급을 선택해 주세요.')
         return cleaned_data

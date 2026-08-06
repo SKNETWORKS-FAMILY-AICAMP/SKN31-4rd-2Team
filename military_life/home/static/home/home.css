@@ -1,5 +1,12 @@
 /* home/static/home/home.css */
 
+/* ---------------- 공통 섹션 폭 ---------------- */
+.section-container {
+    max-width: 1080px;
+    width: 100%;
+    margin: 0 auto;
+}
+
 /* ---------------- Hero(홈) ---------------- */
 .hero {
     background: linear-gradient(135deg, var(--color-olive), var(--color-dark-green));
@@ -7,9 +14,14 @@
     border-radius: var(--radius-lg);
     padding: 40px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     gap: 32px;
     flex-wrap: wrap;
+}
+
+.hero__content {
+    max-width: 640px;
 }
 
 .hero__badge {
@@ -23,26 +35,88 @@
     margin-bottom: 16px;
 }
 
-.hero__title { font-size: 2.2rem; margin: 0 0 16px; line-height: 1.3; }
-.hero__desc { color: #d7dccf; margin-bottom: 24px; }
+.hero__title { 
+    font-size: 2.4rem; 
+    font-weight: 700;
+    margin: 0 0 16px; 
+    line-height: 1.3; 
+}
+.hero__desc { font-size: 1.05rem; color: #d7dccf; margin-bottom: 40px; }
+
+.hero__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #a4d65e;
+    color: #14351f;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: none;
+    
+}
 
 .hero__dday-card {
-    background: rgba(0,0,0,0.15);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: var(--radius-md);
-    padding: 24px;
-    min-width: 280px;
+    padding: 24px 28px;
+    min-width: 300px;
+}
+
+.hero__dday-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #cfd6c4;
+    margin-bottom: 2px;
+}
+
+.hero__dday-badge {
+    color: #a4d65e;
+    font-weight: 700;
+}
+
+.hero__dday-value {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 2px;
+}
+
+.hero__dday-value strong {
+    color: #a4d65e;
+}
+
+.hero__dday-sub {
+    font-size: 0.85rem;
+    color: #b7bfae;
+    margin-bottom: 12px;
 }
 
 .progress-bar {
     height: 8px;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 999px;
     margin: 12px 0;
     overflow: hidden;
 }
 .progress-bar__fill {
     height: 100%;
-    background: var(--color-primary);
+    background: #a4d65e;
+    border-radius: 999px;
+}
+
+.progress-bar__labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #b7bfae;
+}
+.progress-bar__labels .percent {
+    color: #a4d65e;
+    font-weight: 600;
 }
 
 /* ---------------- Service Cards ---------------- */
@@ -61,11 +135,81 @@
 }
 
 .service-card__icon {
-    width: 48px; height: 48px;
+    width: 42px; height: 42px;
     display: flex; align-items: center; justify-content: center;
     border-radius: var(--radius-md);
     background: var(--color-dark-green);
     color: #fff;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     margin-bottom: 16px;
+}
+
+.service-card__icon--accent {
+    background: var(--color-officer, #6b4a2f);
+}
+
+/* ---------------- Emergency Alert ---------------- */
+.emergency-alert {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    background: linear-gradient(135deg, #3c2f26 0%, #241b15 100%);
+    border-radius: var(--radius-lg);
+    padding: 18px 28px;
+}
+
+.emergency-alert__content {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.emergency-alert__icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: #c0392b;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.emergency-alert__title {
+    color: #e0b976;
+    font-weight: 700;
+    font-size: 1.0rem;
+    margin-bottom: 6px;
+}
+
+.emergency-alert__text {
+    color: #c9c2b8;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.emergency-alert__text strong {
+    color: #fff;
+    font-weight: 700;
+}
+
+.emergency-alert__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #c0392b;
+    color: #fff;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+.emergency-alert__cta:hover {
+    background: #a8321f;
+    color: #fff;
 }
