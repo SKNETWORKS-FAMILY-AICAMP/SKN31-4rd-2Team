@@ -31,9 +31,9 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = "django-insecure-rbjy0p*-)!$vmar37p10dh5raosuwyv)-exva@qk3$u=pi(4gy"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -86,9 +86,19 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
+    "sqlite": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+    },
+
+    'default': {
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': os.getenv('DB_NAME'),
+    'USER': os.getenv('DB_USER'),
+    'PASSWORD': os.getenv('DB_PASSWORD'),
+    'HOST': os.getenv('DB_HOST'),
+    'PORT': os.getenv('DB_PORT', '3306'),
+    'OPTIONS': {'charset': 'utf8mb4'},
     }
 }
 
@@ -134,7 +144,8 @@ LOGIN_URL = "account:login"
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = '/var/www/military_life/static'
+MEDIA_ROOT = '/var/www/military_life/media'
 
 
 
