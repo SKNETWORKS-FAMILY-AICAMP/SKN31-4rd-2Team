@@ -134,6 +134,8 @@ def _get_dday_context(request, today):
     served_days = max((today - profile.enlist_date).days, 0)
     total_days = (profile.discharge_date - profile.enlist_date).days
     remaining_days = (profile.discharge_date - today).days
+    is_discharged = remaining_days < 0
+    dday_label = f"D-{remaining_days}" if remaining_days >= 0 else f"D+{abs(remaining_days)}"
 
     progress_percent = 0
     if total_days > 0:
@@ -145,9 +147,10 @@ def _get_dday_context(request, today):
         "served_days": served_days,
         "total_days": total_days,
         "remaining_days": remaining_days,
+        "is_discharged": is_discharged,   # 추가
+        "dday_label": dday_label,          # 추가
         "progress_percent": progress_percent,
     }
-
 
 def _get_calendar_context(request, today):
     year = int(request.GET.get("year", today.year))

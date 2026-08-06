@@ -40,8 +40,8 @@
             <p class="dday-label">복무한 날</p>
             <h1 class="dday-number">{{ served_days }}<span class="dday-day-unit">일째</span></h1>
             {% else %}
-            <p class="dday-label">전역까지 남은 날</p>
-            <h1 class="dday-number">D-{{ remaining_days }}</h1>
+            <p class="dday-label">{% if is_discharged %}전역 후 경과일{% else %}전역까지 남은 날{% endif %}</p>
+            <h1 class="dday-number">{{ dday_label }}</h1>
             {% endif %}
             <p class="dday-date">{{ service_info.discharge_date|date:"Y년 n월 j일" }} 전역 예정</p>
             <div class="dday-progress-bar">
