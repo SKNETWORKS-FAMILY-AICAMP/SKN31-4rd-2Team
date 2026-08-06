@@ -5,7 +5,7 @@
 | 전서연 | 고현아 | 김세희 | 이용혁 | 박동관 |
 | :---: | :---: | :---: | :---: | :---: |
 | <a href="https://github.com/sxoxyn"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/> | <a href="https://github.com/hellene0708-cyber"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/> | <a href="https://github.com/kimsehuikim"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/> | <a href="https://github.com/leeyonghyok"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/> |  <a href="https://github.com/Parkdongkwan"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/> |
-|<img src="images/dg.png" width="150" height="150"> | <img src="images/ha.png" width="150" height="150"> | <img src="images/sh.png" width="150" height="150"> | <img src="images/yh.png" width="150" height="150"> | <img src="images/sy.png" width="150" height="150"> |
+|<img src="military_life/images/sy.png" width="150" height="150"> | <img src="military_life/images/ha.png" width="150" height="150"> | <img src="military_life/images/sh.png" width="150" height="150"> | <img src="military_life/images/yh.png" width="150" height="150"> | <img src="military_life/images/dg.png" width="150" height="150"> |
 | <b>PM</b>     |<b>FE</b>  |<b>BE</b>   |<b>BE</b>  | <b>BE/FE</b>   | | 
 
 ---
@@ -65,6 +65,47 @@ Django 기반 웹 서비스 · AWS EC2 · AWS RDS
 | **Infrastructure** | ![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?style=flat&logo=amazonaws&logoColor=white) ![AWS RDS](https://img.shields.io/badge/AWS_RDS-527FFF?style=flat&logo=amazonaws&logoColor=white) ![Nginx](https://img.shields.io/badge/Nginx-009639?style=flat&logo=nginx&logoColor=white) ![Gunicorn](https://img.shields.io/badge/Gunicorn-499848?style=flat) |
 
 ---
+# 📁 프로젝트 구조 
+
+```text
+SKN31-4th-2Team
+├── military_life
+│   ├── account/              # 회원가입, 로그인 및 사용자 관리
+│   ├── back_logic/           # RAG 검색 및 AI 챗봇 로직
+│   │   ├── chatbot.py
+│   │   ├── graphdb_retriever.py
+│   │   ├── vectordb_retriever.py
+│   │   └── tools.py
+│   │
+│   ├── board/               # 익명 게시판 기능
+│   ├── chatbot/             # 챗봇 앱
+│   │   ├── migrations/
+│   │   ├── static/
+│   │   ├── templates/
+│   │   ├── admin.pys
+│   │   ├── models.py
+│   │   ├── urls.py
+│   │   └── views.py
+│   │
+│   ├── config/              # Django 프로젝트 설정
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── asgi.py
+│   │   └── wsgi.py
+│   │
+│   ├── home/                # 메인(Home) 페이지
+│   ├── records/             # 개인 기록(D-day, 캘린더, 목표)
+│   ├── static/              # CSS, JavaScript, 이미지, 폰트
+│   ├── templates/           # 공통 HTML 템플릿
+│   ├── images/              # README 이미지
+│   ├── manage.py
+│   ├── requirements-linux.txt
+│   └── deploy.sh
+│
+├── README.md
+├── requirements-linux.txt
+└── requirements-test.txt
+```
 
 # 🌐 AWS EC2 URL
 
@@ -74,3 +115,14 @@ Django 기반 웹 서비스 · AWS EC2 · AWS RDS
 | 🔑 Admin | http://43.200.132.171/admin |
 
 > **배포 환경:** AWS EC2 (Ubuntu 24.04 LTS) + AWS RDS(MySQL)
+
+# 📄 프로젝트 산출물
+
+프로젝트 진행 과정에서 작성한 주요 산출물입니다.
+
+| 산출물 | 자세히 보기 |
+|--------|------|
+| 📋 **요구사항 정의서** |  |
+| 🎨 **화면 설계서** |  |
+| 🏗 **시스템 구성도** |  |
+| 🧪 **테스트 계획서 및 테스트 결과 보고서** |  |
