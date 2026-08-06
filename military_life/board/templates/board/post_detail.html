@@ -33,6 +33,13 @@
                 </div>
 
                 <div class="position-absolute top-0 end-0 d-flex gap-2">
+                    <!-- 신고 버튼 -->
+                    <button class="btn btn-light btn-sm rounded-circle" id="reportBtn" title="신고하기"
+                        data-bs-toggle="modal" data-bs-target="#reportModal">
+                        <i
+                            class="bi bi-exclamation-triangle-fill {% if user_has_reported %}text-danger{% else %}text-secondary{% endif %}"></i>
+                    </button>
+
                     <!-- 수정/삭제 드롭다운 -->
                     {% if post.author == request.user %}
                     <div class="dropdown">
@@ -164,6 +171,31 @@
 </div>
 {% endif %}
 
+<!-- 신고 모달 -->
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="reportModalLabel">게시글 신고</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reportForm" data-url="{% url 'board:report' post.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="reason" class="form-label fw-bold">신고 사유</label>
+                        <textarea class="form-control" style="background: var(--color-bg);" id="reason" name="reason"
+                            rows="4" placeholder="신고 사유를 구체적으로 작성해 주세요." required></textarea>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" class="board-btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-danger">신고하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 
