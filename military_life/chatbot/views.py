@@ -212,17 +212,19 @@ async def chat_stream(request, conversation_id=None):
 
     def _resolve_user_and_rank():
         if not request.user.is_authenticated:
-            return None, None
+            return None, None, None
 
         user = request.user
-        rank = getattr(getattr(user, "profile", None), "rank", None)
+        profile = getattr(user, "profile", None)
+        rank = getattr(profile, "rank", None)
+        status = getattr(profile, "status", None)  # "간부" 또는 "병사"
 
-        return user, rank
+        return user, rank, status
 
-    user, user_rank = await sync_to_async(_resolve_user_and_rank)()
+    user, user_rank, user_status = await sync_to_async(_resolve_user_and_rank)()
 
-    if user_rank is not None:
-        prompt_message = f"질문자 계급[{user_rank}]\n{user_message}"
+    if user_status is not None:
+        prompt_message = f"[질문자 신분: {user_status} / 계급: {user_rank or '미상'}]\n{user_message}"
     else:
         prompt_message = user_message
 
