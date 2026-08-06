@@ -7,7 +7,10 @@
 
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'chatbot/css/chatbot.css' %}">
+<link
+  rel="stylesheet"
+  href="{% static 'chatbot/css/chatbot.css' %}"
+>
 
 <style>
   :root {
@@ -286,6 +289,7 @@
 
 
 {% block extra_js %}
+{{ welcome_message|json_script:"welcome-message-data" }}
 <script>
   /* ==========================================
      Django URL
@@ -315,6 +319,11 @@
 
   const BOT_PROFILE_IMAGE =
     "{% static 'images/bot_profile.png' %}";
+
+  const WELCOME_MESSAGE =
+    JSON.parse(
+      document.getElementById("welcome-message-data").textContent
+    );
 
 
   /* ==========================================
@@ -447,7 +456,7 @@
     messagesEl.innerHTML = "";
 
     addAiBubble(
-      "안녕! 나는 군 법규랑 병영생활 관련해서 도와주는 박병장이야. 휴가, 징계, 급여, 전역 같은 거 뭐든 편하게 물어봐. 형이 다 알려줄게!",
+      WELCOME_MESSAGE,
       getCurrentTimeText()
     );
   }

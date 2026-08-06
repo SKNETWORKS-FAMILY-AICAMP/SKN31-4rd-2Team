@@ -13,6 +13,90 @@ from .models import Conversation, Message
 RECENT_CONVERSATION_LIMIT = 10
 
 
+def _get_user_rank_text(user) -> str:
+    """사용자 프로필의 계급을 화면 표시용 문자열로 반환한다."""
+    profile = getattr(user, "profile", None)
+    if profile is None:
+        return ""
+
+    get_rank_display = getattr(profile, "get_rank_display", None)
+    if callable(get_rank_display):
+        rank_display = get_rank_display()
+        if rank_display:
+            return str(rank_display).strip()
+
+    rank = getattr(profile, "rank", "")
+    return str(rank).strip() if rank is not None else ""
+
+
+def _build_welcome_message(rank: str) -> str:
+    """사용자의 계급에 맞는 새 채팅 인사말을 만든다."""
+    normalized_rank = (rank or "").replace(" ", "").upper()
+
+    rank_aliases = {
+        "PRIVATE": "이병",
+        "PRIVATEFIRSTCLASS": "일병",
+        "CORPORAL": "상병",
+        "SERGEANT": "병장",
+        "STAFFSERGEANT": "하사",
+        "SERGEANTFIRSTCLASS": "중사",
+        "MASTERSERGEANT": "상사",
+        "SERGEANTMAJOR": "원사",
+        "SECONDLIEUTENANT": "소위",
+        "FIRSTLIEUTENANT": "중위",
+        "CAPTAIN": "대위",
+        "MAJOR": "소령",
+        "LIEUTENANTCOLONEL": "중령",
+        "COLONEL": "대령",
+        "BRIGADIERGENERAL": "준장",
+        "MAJORGENERAL": "소장",
+        "LIEUTENANTGENERAL": "중장",
+        "GENERAL": "대장",
+    }
+
+    display_rank = rank_aliases.get(normalized_rank, rank.strip() if rank else "")
+
+    soldier_ranks = {"이병", "일병", "상병", "병장"}
+    nco_ranks = {"하사", "중사", "상사", "원사"}
+    officer_ranks = {
+        "준위", "소위", "중위", "대위",
+        "소령", "중령", "대령",
+        "준장", "소장", "중장", "대장",
+    }
+
+    if display_rank in soldier_ranks:
+        return (
+            f"충성! {display_rank}, 박병장 상담소에 잘 왔다. "
+            "휴가, 징계, 급여, 전역처럼 군 생활 중 궁금한 건 편하게 물어봐. "
+            "형이 규정과 근거를 확인해서 알려줄게!"
+        )
+
+    if display_rank in nco_ranks:
+        return (
+            f"충성! {display_rank}님, 박병장 상담소입니다. "
+            "군 법규와 병영생활 관련해 궁금하신 내용을 말씀해 주시면 "
+            "규정과 근거를 확인해 안내드리겠습니다."
+        )
+
+    if display_rank in officer_ranks:
+        return (
+            f"충성! {display_rank}님, 박병장 상담소입니다. "
+            "군 법규, 복무 규정, 병영생활과 관련해 확인이 필요한 사항을 말씀해 주십시오. "
+            "관련 근거를 찾아 정확히 보고드리겠습니다."
+        )
+
+    if display_rank:
+        return (
+            f"안녕하세요, {display_rank}님. 박병장 상담소입니다. "
+            "군 법규와 병영생활에 관해 궁금한 내용을 편하게 말씀해 주세요."
+        )
+
+    return (
+        "안녕! 나는 군 법규랑 병영생활 관련해서 도와주는 박병장이야. "
+        "휴가, 징계, 급여, 전역 같은 거 뭐든 편하게 물어봐. 형이 다 알려줄게!"
+    )
+
+
 @login_required
 def chat_page(request):
     """채팅 페이지를 렌더링하고 최근 대화 10개를 함께 전달한다."""
@@ -21,7 +105,17 @@ def chat_page(request):
             :RECENT_CONVERSATION_LIMIT
         ]
     )
-    return render(request, "chat.html", {"conversations": conversations})
+    user_rank = _get_user_rank_text(request.user)
+    welcome_message = _build_welcome_message(user_rank)
+
+    return render(
+        request,
+        "chat.html",
+        {
+            "conversations": conversations,
+            "welcome_message": welcome_message,
+        },
+    )
 
 
 @login_required
