@@ -10,18 +10,11 @@ from django.contrib import messages
 
 DEFAULT_CATEGORIES = ['휴가', '징계', '급여', '전역', '병영생활']
 
-# @login_required # 테스트를 위해 임시로 비활성화
+@login_required
 def post_list(request):
     """
     게시판 목록을 조회하는 뷰입니다.
     """
-    # --- 테스트를 위한 자동 로그인 코드 ---
-    if not request.user.is_authenticated:
-        User = get_user_model()
-        user = User.objects.first() # 가장 첫 번째 유저(ex. admin) 가져오기
-        if user:
-            login(request, user)
-    # -----------------------------------
     
     category_name = request.GET.get('category')
     search_query = request.GET.get('q')
