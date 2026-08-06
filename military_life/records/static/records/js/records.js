@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const entryTypeInput = document.getElementById('entry-type-input');
     const moodInput = document.getElementById('mood-input');
     const contentInput = document.getElementById('content-input');
+    const deleteBtn = document.getElementById('modal-delete-btn');
 
     const typeButtons = document.querySelectorAll('.type-btn');
     const moodButtons = document.querySelectorAll('.mood-btn');
@@ -66,6 +67,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         setActiveButton(typeButtons, type);
         setActiveButton(moodButtons, mood);
+
+        // 이미 저장된 기록이 있는 날짜에만 삭제 버튼 표시
+        deleteBtn.hidden = dayCell.dataset.hasEntry !== 'true';
 
         modal.hidden = false;
     }
@@ -95,28 +99,97 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-    document.getElementById('modal-cancel-btn').addEventListener('click', closeModal);
     modal.addEventListener('click', function (event) {
         if (event.target === modal) {
             closeModal();
         }
     });
 
-    /* ---------- 새 목표 추가 폼 열기/닫기 ---------- */
-    const addGoalBtn = document.getElementById('add-goal-btn');
-    const goalForm = document.getElementById('goal-form');
-    const cancelGoalBtn = document.getElementById('cancel-goal-btn');
+    deleteBtn.addEventListener('click', function (event) {
+        if (!window.confirm('이 날짜의 기록을 삭제하시겠습니까?')) {
+            event.preventDefault();
+        }
+    });
 
-    if (addGoalBtn && goalForm) {
+    /* ---------- 새 목표 추가 / 수정 모달 ---------- */
+    const addGoalBtn = document.getElementById('add-goal-btn');
+    const goalModal = document.getElementById('goal-modal');
+    const goalModalCloseBtn = document.getElementById('goal-modal-close-btn');
+    const goalModalTitle = document.getElementById('goal-modal-title');
+    const goalIdInput = document.getElementById('goal-id-input');
+    const goalDeleteBtn = document.getElementById('goal-delete-btn');
+    const goalCategoryInput = document.getElementById('id_category');
+    const goalTitleInput = document.getElementById('id_title');
+    const goalTargetDateInput = document.getElementById('id_target_date');
+
+    function openGoalModal() {
+        goalModal.hidden = false;
+    }
+
+    function closeGoalModal() {
+        goalModal.hidden = true;
+    }
+
+    function resetGoalForm() {
+        goalModalTitle.textContent = '새 목표 추가';
+        goalIdInput.value = '';
+        goalCategoryInput.value = '';
+        goalTitleInput.value = '';
+        goalTargetDateInput.value = '';
+        goalDeleteBtn.hidden = true;
+    }
+
+    function openGoalModalForEdit(card) {
+        goalModalTitle.textContent = '목표 수정';
+        goalIdInput.value = card.dataset.goalId;
+        goalCategoryInput.value = card.dataset.category || '';
+        goalTitleInput.value = card.dataset.title || '';
+        goalTargetDateInput.value = card.dataset.targetDate || '';
+        goalDeleteBtn.hidden = false;
+        openGoalModal();
+    }
+
+    if (addGoalBtn && goalModal) {
         addGoalBtn.addEventListener('click', function () {
-            goalForm.hidden = false;
-            addGoalBtn.hidden = true;
+            resetGoalForm();
+            openGoalModal();
         });
     }
-    if (cancelGoalBtn && goalForm) {
-        cancelGoalBtn.addEventListener('click', function () {
-            goalForm.hidden = true;
-            addGoalBtn.hidden = false;
+    if (goalModalCloseBtn) {
+        goalModalCloseBtn.addEventListener('click', closeGoalModal);
+    }
+    if (goalModal) {
+        goalModal.addEventListener('click', function (event) {
+            if (event.target === goalModal) {
+                closeGoalModal();
+            }
+        });
+    }
+    if (goalDeleteBtn) {
+        goalDeleteBtn.addEventListener('click', function (event) {
+            if (!window.confirm('이 목표를 삭제하시겠습니까?')) {
+                event.preventDefault();
+            }
+        });
+    }
+
+    document.querySelectorAll('.goal-card').forEach(function (card) {
+        card.addEventListener('click', function () {
+            openGoalModalForEdit(card);
+        });
+    });
+
+    /* ---------- (간부) 전역 예정일 수정 토글 ---------- */
+    const editDischargeBtn = document.getElementById('edit-discharge-btn');
+    const dischargeDisplay = document.getElementById('discharge-display');
+    const dischargeForm = document.getElementById('discharge-date-form');
+
+    if (editDischargeBtn && dischargeForm) {
+        editDischargeBtn.addEventListener('click', function () {
+            dischargeForm.hidden = false;
+            if (dischargeDisplay) {
+                dischargeDisplay.hidden = true;
+            }
         });
     }
 });

@@ -5,31 +5,48 @@ from django.contrib.auth.decorators import login_required
 from .models import Post, Category, Comment, PostLike, Report
 import json
 
-@login_required
+from django.contrib.auth import get_user_model, login
+
+DEFAULT_CATEGORIES = ['휴가', '징계', '급여', '전역', '병영생활']
+
+# @login_required # 테스트를 위해 임시로 비활성화
 def post_list(request):
     """
     게시판 목록을 조회하는 뷰입니다.
     """
-    category_id = request.GET.get('category')
+    # --- 테스트를 위한 자동 로그인 코드 ---
+    if not request.user.is_authenticated:
+        User = get_user_model()
+        user = User.objects.first() # 가장 첫 번째 유저(ex. admin) 가져오기
+        if user:
+            login(request, user)
+    # -----------------------------------
+    
+    category_name = request.GET.get('category')
     search_query = request.GET.get('q')
+    sort = request.GET.get('sort', 'latest')
 
     posts = Post.objects.annotate(
         like_count=Count('likes', distinct=True),
         comment_count=Count('comments', distinct=True)
-    ).order_by('-created_at')
+    )
 
-    if category_id:
-        posts = posts.filter(category_id=category_id)
+    if sort == 'popular':
+        posts = posts.order_by('-like_count', '-view_count', '-created_at')
+    else:
+        posts = posts.order_by('-created_at')
+
+    if category_name:
+        posts = posts.filter(category__name=category_name)
     if search_query:
         posts = posts.filter(Q(title__icontains=search_query) | Q(content__icontains=search_query))
 
-    categories = Category.objects.all()
-
     context = {
         'posts': posts,
-        'categories': categories,
-        'current_category': int(category_id) if category_id else None,
+        'categories': DEFAULT_CATEGORIES,
+        'current_category': category_name,
         'search_query': search_query or '',
+        'current_sort': sort,
     }
     return render(request, 'board/post_list.html', context)
 
@@ -70,14 +87,14 @@ def post_create(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            category_id = data.get('category')
+            category_name = data.get('category')
             title = data.get('title')
             content = data.get('content')
 
-            if not all([category_id, title, content]):
+            if not all([category_name, title, content]):
                 return JsonResponse({'status': 'error', 'message': '모든 필드를 입력해주세요.'}, status=400)
 
-            category = get_object_or_404(Category, pk=category_id)
+            category, _ = Category.objects.get_or_create(name=category_name)
             post = Post.objects.create(
                 author=request.user,
                 category=category,
@@ -102,12 +119,12 @@ def post_update(request, pk):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            category_id = data.get('category')
+            category_name = data.get('category')
             title = data.get('title')
             content = data.get('content')
 
-            if category_id:
-                post.category = get_object_or_404(Category, pk=category_id)
+            if category_name:
+                post.category, _ = Category.objects.get_or_create(name=category_name)
             if title:
                 post.title = title
             if content:

@@ -35,6 +35,22 @@ def _handle_post(request):
     form_type = request.POST.get("form_type")
 
     if form_type == "journal":
+        action = request.POST.get("action", "save")
+
+        if action == "delete":
+            try:
+                entry_date = date.fromisoformat(request.POST.get("entry_date", ""))
+            except ValueError:
+                messages.error(request, "잘못된 날짜입니다.")
+                return redirect(f"{request.path}?tab=calendar")
+
+            deleted, _ = JournalEntry.objects.filter(
+                user=request.user, entry_date=entry_date
+            ).delete()
+            if deleted:
+                messages.success(request, "일정을 삭제했습니다.")
+            return redirect(f"{request.path}?tab=calendar")
+
         form = JournalEntryForm(request.POST)
         if form.is_valid():
             entry_date = form.cleaned_data["entry_date"]
@@ -48,23 +64,63 @@ def _handle_post(request):
                     "content": form.cleaned_data["content"],
                 },
             )
-            messages.success(request, "일정이 저장되었습니다.")
-            return redirect(
-                f"{request.path}?tab=calendar&year={entry_date.year}&month={entry_date.month}"
-            )
-        messages.error(request, "일정을 저장하지 못했습니다. 입력값을 확인해주세요.")
+            messages.success(request, "일정을 저장했습니다.")
+        else:
+            messages.error(request, "일정을 저장하지 못했습니다. 입력값을 확인해주세요.")
         return redirect(f"{request.path}?tab=calendar")
 
     if form_type == "goal":
+        action = request.POST.get("action", "save")
+
+        if action == "delete":
+            goal_id = request.POST.get("goal_id", "")
+            if not goal_id.isdigit():
+                messages.error(request, "잘못된 요청입니다.")
+                return redirect(f"{request.path}?tab=goals")
+
+            deleted, _ = Goal.objects.filter(user=request.user, pk=goal_id).delete()
+            if deleted:
+                messages.success(request, "목표를 삭제했습니다.")
+            return redirect(f"{request.path}?tab=goals")
+
         form = GoalForm(request.POST)
         if form.is_valid():
-            goal = form.save(commit=False)
-            goal.user = request.user
-            goal.save()
-            messages.success(request, "목표가 추가되었습니다.")
+            goal_id = request.POST.get("goal_id", "")
+            if goal_id.isdigit():
+                goal = Goal.objects.filter(pk=goal_id, user=request.user).first()
+                if not goal:
+                    messages.error(request, "목표를 찾을 수 없습니다.")
+                    return redirect(f"{request.path}?tab=goals")
+                goal.category = form.cleaned_data["category"]
+                goal.title = form.cleaned_data["title"]
+                goal.target_date = form.cleaned_data["target_date"]
+                goal.save()
+                messages.success(request, "목표를 수정했습니다.")
+            else:
+                goal = form.save(commit=False)
+                goal.user = request.user
+                goal.save()
+                messages.success(request, "목표를 추가했습니다.")
         else:
-            messages.error(request, "목표를 추가하지 못했습니다. 입력값을 확인해주세요.")
+            messages.error(request, "목표를 저장하지 못했습니다. 입력값을 확인해주세요.")
         return redirect(f"{request.path}?tab=goals")
+
+    if form_type == "discharge_date":
+        profile = getattr(request.user, "profile", None)
+        if not profile:
+            messages.error(request, "프로필 정보를 찾을 수 없습니다.")
+            return redirect(f"{request.path}?tab=dday")
+
+        try:
+            discharge_date = date.fromisoformat(request.POST.get("discharge_date", ""))
+        except ValueError:
+            messages.error(request, "잘못된 날짜입니다.")
+            return redirect(f"{request.path}?tab=dday")
+
+        profile.discharge_date = discharge_date
+        profile.save(update_fields=["discharge_date"])
+        messages.success(request, "전역 예정일을 저장했습니다.")
+        return redirect(f"{request.path}?tab=dday")
 
     return redirect(request.path)
 
@@ -74,8 +130,9 @@ def _get_dday_context(request, today):
     if not profile or not profile.enlist_date or not profile.discharge_date:
         return {"service_info": None}
 
+    is_officer = profile.status == "간부"
+    served_days = max((today - profile.enlist_date).days, 0)
     total_days = (profile.discharge_date - profile.enlist_date).days
-    served_days = (today - profile.enlist_date).days
     remaining_days = (profile.discharge_date - today).days
 
     progress_percent = 0
@@ -84,7 +141,8 @@ def _get_dday_context(request, today):
 
     return {
         "service_info": profile,
-        "served_days": max(served_days, 0),
+        "is_officer": is_officer,
+        "served_days": served_days,
         "total_days": total_days,
         "remaining_days": remaining_days,
         "progress_percent": progress_percent,
