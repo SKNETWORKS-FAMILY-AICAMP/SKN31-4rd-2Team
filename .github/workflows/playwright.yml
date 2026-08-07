@@ -17,6 +17,13 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Debug credential length
+      run: |
+        echo "email length: ${#TEST_USER_EMAIL}"
+        echo "password length: ${#TEST_USER_PASSWORD}"
+      env:
+        TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
     - name: Run Playwright tests
       run: npx playwright test
       env:
