@@ -32,9 +32,11 @@ test.describe('TC-HOME-01: 홈 대시보드', () => {
     }
 
     // 서비스 안내 카드 3개 (챗봇 / 개인기록 / 게시판 바로가기)
-    await expect(page.getByText('AI 챗봇 상담')).toBeVisible();
-    await expect(page.getByText('개인 기록')).toBeVisible();
-    await expect(page.getByText('익명 게시판')).toBeVisible();
+    // ⚠️ getByText는 navbar의 같은 텍스트 링크와 겹쳐서 strict mode violation이 났음
+    // (예: "개인 기록"이 navbar 링크와 서비스 카드 h6 둘 다에 있음) -> heading role로 좁힘
+    await expect(page.getByRole('heading', { name: 'AI 챗봇 상담' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '개인 기록' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '익명 게시판' })).toBeVisible();
 
     // 긴급 신고(국방헬프콜) 배너
     await expect(page.getByRole('link', { name: /1303/ })).toBeVisible();

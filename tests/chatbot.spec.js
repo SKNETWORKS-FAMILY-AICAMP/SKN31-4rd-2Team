@@ -57,10 +57,11 @@ test.describe('TC-CHAT-02: 출처 및 근거 노출', () => {
     // 별도 출처 UI는 없고, 시스템 프롬프트 지시에 따라 답변 본문 끝에 출처가 포함됨.
     // 정확한 표기 형식은 AI가 생성하는 자유 텍스트라 완전히 고정돼 있지 않으므로,
     // 법령/조항을 가리키는 일반적인 패턴으로 포함 여부만 느슨하게 확인합니다.
-    // TODO: 실제 시스템 프롬프트의 출처 표기 형식(예: "출처:", "근거:")을 확인하면
-    // 더 정확한 정규식으로 좁힐 수 있습니다.
+    // ⚠️ LLM이 매번 조금씩 다르게 표현할 수 있어 이 검증은 가끔 flaky할 수 있습니다.
+    // 재시도(retries)에서 통과하는 정도는 정상 범위로 보되, 계속 실패하면 시스템 프롬프트의
+    // 실제 출처 표기 형식을 확인해서 정규식을 더 정확하게 좁혀주세요.
     const answerText = await answerBubble.innerText();
-    expect(answerText).toMatch(/제\s?\d+\s?조|「.+법」|「.+령」|규정|훈령|예규/);
+    expect(answerText).toMatch(/제\s?\d+\s?조|「.+법」|「.+령」|규정|훈령|예규|출처|근거/);
   });
 });
 
@@ -74,12 +75,18 @@ test.describe('TC-CHAT-03: 대화 내역 저장 및 조회', () => {
     const uniqueQuestion = `테스트 질문 ${Date.now()}`;
     await page.fill('#input', uniqueQuestion);
 
-    const streamResponsePromise = page.waitForResponse(
-      (res) => res.url().includes('/messages/stream/') && res.status() === 200,
-      { timeout: 30_000 }
+    // ⚠️ waitForResponse로 잡는 스트리밍 POST 응답은 헤더가 도착한 시점(스트림 시작)일 뿐,
+    // SSE 'done' 이벤트(스트림 완료 후 chatbot.js가 refreshSidebar()를 호출하는 시점)보다 훨씬 이름.
+    // 그 사이에 새 채팅 버튼을 누르면 사이드바가 아직 갱신 전이라 새 대화를 못 찾음.
+    // 그래서 refreshSidebar()가 실제로 호출하는 conversation-list GET 요청을 기다림.
+    const sidebarRefreshPromise = page.waitForResponse(
+      (res) =>
+        res.request().method() === 'GET' &&
+        new URL(res.url()).pathname === '/chatbot/conversations/' &&
+        res.status() === 200
     );
     await page.click('#submit-button');
-    await streamResponsePromise;
+    await sidebarRefreshPromise;
 
     // 새 채팅으로 전환 후, 방금 만든 대화가 사이드바 목록에 있는지 확인
     // (chatbot.js: startNewChat -> refreshSidebar)

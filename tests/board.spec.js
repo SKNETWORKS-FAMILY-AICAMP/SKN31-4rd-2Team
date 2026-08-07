@@ -67,8 +67,10 @@ test.describe('TC-BRD-02: 새 글 작성 및 익명성 보장', () => {
     await page.getByText(uniqueTitle).click();
 
     // post_detail.html: 작성자는 항상 "익명"으로만 표시됨
+    // ⚠️ body 전체를 검사하면 navbar에 항상 떠 있는 로그인 사용자 아이디(base.html:
+    // {{ user.username }})까지 걸려서 무조건 실패함 -> 본문 영역(main.page)으로 스코프를 좁힘
     const email = process.env.TEST_USER_EMAIL;
-    await expect(page.locator('body')).not.toContainText(email);
+    await expect(page.locator('main.page')).not.toContainText(email);
     await expect(page.getByText('익명').first()).toBeVisible();
   });
 });
