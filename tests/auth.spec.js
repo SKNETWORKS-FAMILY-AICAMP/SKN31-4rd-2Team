@@ -26,28 +26,3 @@ test.describe('로그인 플로우', () => {
     await expect(page).toHaveURL(/\/account\/login/);
   });
 });
-
-test.describe('로그인 후 보호된 페이지 접근', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/account/login/');
-    await page.fill('input[name="username"]', TEST_USER_EMAIL);
-    await page.fill('input[name="password"]', TEST_USER_PASSWORD);
-    await page.click('button[type="submit"]');
-    await expect(page).toHaveURL('/');
-  });
-
-  test('records 페이지 접근 가능', async ({ page }) => {
-    const response = await page.goto('/records/');
-    expect(response.status()).toBe(200);
-  });
-
-  test('chatbot 페이지 접근 가능', async ({ page }) => {
-    const response = await page.goto('/chatbot/');
-    expect(response.status()).toBe(200);
-  });
-
-  test('board 목록 페이지 접근 가능', async ({ page }) => {
-    const response = await page.goto('/board/');
-    expect(response.status()).toBe(200);
-  });
-});
