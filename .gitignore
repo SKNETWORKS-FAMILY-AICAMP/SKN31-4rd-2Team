@@ -5,7 +5,7 @@ __pycache__/
 *$py.class
 *.pyc
 .venv/
-
+.github
 # C extensions
 *.so
 
