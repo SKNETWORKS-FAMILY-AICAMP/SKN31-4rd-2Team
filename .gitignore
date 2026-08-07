@@ -231,3 +231,11 @@ staticfiles/
 requirements.txt
 C:\Users\Playdata\SKN\SKN31-4th-2Team\docs
 C:\Users\Playdata\SKN\SKN31-4th-2Team\CLAUDE.md
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
