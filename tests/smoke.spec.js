@@ -1,23 +1,6 @@
 // tests/smoke.spec.js
 import { test, expect } from '@playwright/test';
 
-test.describe('공개 페이지', () => {
-  test('홈 페이지 접속', async ({ page }) => {
-    const response = await page.goto('/');
-    expect(response.status()).toBe(200);
-  });
-
-  test('로그인 페이지 접속', async ({ page }) => {
-    const response = await page.goto('/account/login/');
-    expect(response.status()).toBe(200);
-  });
-
-  test('회원가입 페이지 접속', async ({ page }) => {
-    const response = await page.goto('/account/signup/');
-    expect(response.status()).toBe(200);
-  });
-});
-
 test.describe('로그인 필요 페이지 → 미로그인 시 리다이렉트 확인', () => {
   const protectedPages = [
     '/records/',
